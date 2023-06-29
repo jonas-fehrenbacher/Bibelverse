@@ -1,0 +1,81 @@
+@import "verseFlexbox.css";
+
+body {
+    font-family: Arial;
+    margin: 0px;
+    font-size: 120%;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh; /* required to place footer at the bottom */
+}
+
+#app > main {
+    flex-grow: 1; /* give every free space to the main content, so that the <footer> is at the bottom */
+}
+
+footer {
+    height: 10rem;
+    background-color: rgb(41,42,53);
+}
+
+footer > div {
+    color: rgb(138, 138, 138);
+    margin: 1rem; /* not padding, because that causes a white border on mobile devices. */
+}
+
+header {
+    background-color: lightSkyBlue;
+    padding: 0.5rem;
+}
+
+#title {
+    display: inline-block;
+    font-size: 2rem;
+    background-color: rgb(179, 225, 253);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    margin: 0.25rem 0.25rem 0rem 0.25rem;
+}
+
+nav {
+    background-color: rgb(41,42,53);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.nav-item {
+    /*backdrop-filter: blur(8px);*/
+    filter: drop-shadow(2px 4px 6px rgb(138, 138, 138));
+    background-color: rgba(255, 255, 255, 0.25); /* Just adjust the color or opacity to make the text pop! */
+    box-shadow: inset 0 0 0 200px rgb(255 255 255 / 8%);
+    
+    border-radius: 1rem;
+    padding: 0.3rem;
+    background-color: rgb(255, 255, 255, 50%);
+    cursor:pointer;
+}
+
+/* pressed: */
+.nav-item:active, 
+.active {
+    background-color: rgb(255, 255, 255, 30%);
+}
+
+.bibleLocation {
+    background-color: rgb(38, 161, 120);
+    color: white;
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    margin-top: 0.5rem;
+}

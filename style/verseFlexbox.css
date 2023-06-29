@@ -1,0 +1,44 @@
+:root {
+    --verseFlexbox-hard-lightFG: rgb(80, 80, 80);
+    --verseFlexbox-hard-lightBG: rgb(222, 222, 222);
+    --verseFlexbox-hard-darkFG: rgb(255, 255, 255);
+    --verseFlexbox-hard-darkBG: rgb(140,140,140);
+    --verseFlexbox-soft-lightFG: rgb(80, 80, 80);
+    --verseFlexbox-soft-lightBG: rgb(235, 235, 235);
+    --verseFlexbox-soft-darkFG: rgb(80, 80, 80);
+    --verseFlexbox-soft-darkBG: rgb(222, 222, 222);
+}
+
+#verseFlexbox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+    align-content: center; /*multi-line*/
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgb(245, 245, 245);
+}
+
+.verseFlexbox-item {
+    flex-basis: 20rem; /*max size.*/
+    flex-grow: 1; /* fill remaining horizontal space */
+    background-color: var(--verseFlexbox-soft-lightBG);
+    color: var(--verseFlexbox-soft-lightFG);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+
+    /* center text: */
+    display: flex;
+    justify-content: space-between; /*center*/
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.verseFlexbox-item:nth-child(even) {
+    background: var(--verseFlexbox-soft-darkBG);
+    color: var(--verseFlexbox-soft-darkFG);
+}
