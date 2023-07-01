@@ -1,0 +1,18 @@
+{
+    "tags": [
+        "EternalLife", 
+        "EternalDeath"
+    ],
+    "quotes": [
+        {
+            "startPos": { "b": "Romans", "c": 6, "v": 23 },
+            "endPos": { "b": "Romans", "c": 6, "v": 23 },
+            "tags": [ "EternalLife", "EternalDeath" ]
+        },
+        {
+            "startPos": { "b": "Galatians", "c": 4, "v": 4 },
+            "endPos": { "b": "Galatians", "c": 4, "v": 5 },
+            "tags": [ "EternalLife" ]
+        }
+    ]
+}

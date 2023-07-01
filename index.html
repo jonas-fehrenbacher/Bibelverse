@@ -10,29 +10,27 @@
 <body>
     <div id="app">
         <header>
-            <span id="title">Bibelverse</span>
+            <span id="title"></span>
         </header>
         
         <nav>
-            <div onClick="onTagEvent(BibleTag.EternalLife, this)" class="nav-item">Ewiges Leben</div>
-            <div onClick="onTagEvent(BibleTag.EternalDeath, this)" class="nav-item">Ewiger Tod</div>
+            <!--<div onClick="onTagEvent(BibleTag.EternalLife, this)" class="nav-item">Ewiges Leben</div>
+            <div onClick="onTagEvent(BibleTag.EternalDeath, this)" class="nav-item">Ewiger Tod</div>-->
         </nav>
         
         <main>
             <div id="verseFlexbox"></div>
-            
-            <script src="build/Tools.js"></script> <!--include for main.js -->
-            <script src="build/Bible.js"></script> <!--include for main.js -->
-            <script src="build/main.js"></script>
         </main>
         
         <footer>
-            <div>
-                Bibeltext der Schlachter<br/>
-                Copyright © 2000 Genfer Bibelgesellschaft<br/>
-                Wiedergegeben mit der freundlichen Genehmigung. Alle Rechte vorbehalten.
-            </div>
+            <div id="copyright"></div>
         </footer>
     </div>
+
+    <script src="build/Tools.js"></script> <!--include for main.js -->
+    <script src="build/I18n.js"></script> <!--include for main.js -->
+    <script src="build/Bible.js"></script> <!--include for main.js -->
+    <script src="build/main.js"></script>
+    <!-- Needs to be included at the end. -->
 </body>
 </html>
