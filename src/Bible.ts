@@ -1,5 +1,8 @@
+import { I18n } from "./I18n.js";
+import { assert } from "./Tools.js"
+
 // https://www.bibleserver.com/en
-/*export*/ enum BibleBook
+export enum BibleBook
 {
     None = -1,
     Genesis, Exodus, Leviticus, Numbers, Deuteronomy, Joshua, Judges, Ruth, Samuel1, Samuel2,
@@ -11,13 +14,13 @@
     Hebrews, James, Peter1, Peter2, John1, John2, John3, Jude, Revelation
 }
 
-/*export*/ enum BibleTag
+export enum BibleTag
 {
-    EternalLife,
+    EternalLife = 0,
     EternalDeath
 }
 
-/*export*/ class BibleLocation 
+export class BiblePassagePos
 {
     book:    BibleBook;
     chapter: number;
@@ -30,41 +33,41 @@
     }
 }
 
-/*export*/ class BibleQuote
+export class BibleQuote
 {
-    startLocation: BibleLocation;
-    endLocation:   BibleLocation;
+    startPos: BiblePassagePos;
+    endPos:   BiblePassagePos;
     tags:          BibleTag[];
 
-    constructor(startLocation: BibleLocation, endLocation: BibleLocation, tags: BibleTag[]) {
-        this.startLocation = startLocation;
-        this.endLocation = endLocation;
+    constructor(startPos: BiblePassagePos, endPos: BiblePassagePos, tags: BibleTag[]) {
+        this.startPos = startPos;
+        this.endPos = endPos;
         this.tags = tags;
     }
 
-    getLocationStr(i18n: I18n): string
+    getPositionStr(i18n: I18n): string
     {
-        let bookName = i18n.get(BibleBook[this.startLocation.book]);
+        const bookName = i18n.get(BibleBook[this.startPos.book]);
 
-        let location: string = bookName + " ";
-        location += this.startLocation.chapter + ":";
-        location += this.startLocation.verse;
+        let pos: string = bookName + " ";
+        pos += this.startPos.chapter + ":";
+        pos += this.startPos.verse;
 
-        if (this.startLocation != this.endLocation)
+        if (this.startPos != this.endPos)
         {
-            if (this.startLocation.chapter == this.endLocation.chapter) {
-                location += "-" + this.endLocation.verse;
+            if (this.startPos.chapter == this.endPos.chapter) {
+                pos += "-" + this.endPos.verse;
             }
             else {
-                location += "-" + this.endLocation.chapter + ":" + this.endLocation.verse;
+                pos += "-" + this.endPos.chapter + ":" + this.endPos.verse;
             }
         }
 
-        return location;
+        return pos;
     }
 }
 
-/*export*/ class Bible
+export class Bible
 {
     verses: string[][][]; //< [book][chapter][verse]
     name: string;
@@ -76,22 +79,22 @@
         this.htmlCopyright = htmlCopyright;
     }
 
-    get(startLocation: BibleLocation, endLocation: BibleLocation): string
+    get(startPos: BiblePassagePos, endPos: BiblePassagePos): string
     {
-        assert(startLocation.book == endLocation.book, "");
+        assert(startPos.book == endPos.book, "");
 
         let text: string = "";
-        for (const [chapter, verses] of this.verses[startLocation.book].entries())
+        for (const [chapter, verses] of this.verses[startPos.book].entries())
         {
-            if (chapter >= startLocation.chapter-1 && chapter <= endLocation.chapter-1) // -1, because json starts at 1, but verses[][][] at index 0.
+            if (chapter >= startPos.chapter-1 && chapter <= endPos.chapter-1) // -1, because json starts at 1, but verses[][][] at index 0.
             {
                 for (const [verseNumber, verse] of verses.entries())
                 {
-                    let isLastVerse: Boolean = chapter == endLocation.chapter-1 && verseNumber == endLocation.verse-1;
-                    if ((chapter == startLocation.chapter-1 && chapter == endLocation.chapter-1 && (verseNumber >= startLocation.verse-1 && verseNumber <= endLocation.verse-1)) ||
-                        (chapter == startLocation.chapter-1 && chapter != endLocation.chapter-1 && verseNumber >= startLocation.verse-1) || 
-                        (chapter != startLocation.chapter-1 && chapter != endLocation.chapter-1) ||
-                        (chapter == endLocation.chapter-1 && chapter != startLocation.chapter-1 && verseNumber <= endLocation.verse-1)) {
+                    let isLastVerse: Boolean = chapter == endPos.chapter-1 && verseNumber == endPos.verse-1;
+                    if ((chapter == startPos.chapter-1 && chapter == endPos.chapter-1 && (verseNumber >= startPos.verse-1 && verseNumber <= endPos.verse-1)) ||
+                        (chapter == startPos.chapter-1 && chapter != endPos.chapter-1 && verseNumber >= startPos.verse-1) || 
+                        (chapter != startPos.chapter-1 && chapter != endPos.chapter-1) ||
+                        (chapter == endPos.chapter-1 && chapter != startPos.chapter-1 && verseNumber <= endPos.verse-1)) {
                         text += verse;
                         if (!isLastVerse) {
                             text += " <span class=\"verse-number\">" + (verseNumber+1) + "</span> ";
@@ -106,12 +109,12 @@
 }
 
 // https://www.bibleserver.com/SLT/
-/*export*/ function createSchlachter2000(): Bible
+export function createSchlachter2000(): Bible
 {
     return new Bible([], "Schlachter2000", "");
 }
 
-/*export*/ async function createSchlachter1951(): Promise<Bible>
+export async function createSchlachter1951(): Promise<Bible>
 {
     let bible : Bible = new Bible(
         [], "Schlachter1951", 
@@ -119,25 +122,10 @@
     );
     await fetch("data/schlachter1951.json").then(response => response.json()).then(json => { 
         for (let jsonBook of json) {
-            let book : string[][] = jsonBook.chapters;
+            const book : string[][] = jsonBook.chapters;
             bible.verses.push(book);
         }
     });
 
     return bible;
-}
-
-/*export*/ async function displayBibleTags(i18n: I18n)
-{
-    await fetch("data/bibleQuotes.json").then(response => response.json()).then(json => {
-        let tag: string = "";
-        for (tag of json.tags) {
-            //var button = document.createElement("div");
-            //button.setAttribute("onclick", "onTagEvent(BibleTag." + tag + ", this)");
-            //button.classList.add("nav-item");
-            //button.append(tag);
-            //document.getElementsByTagName("nav")[0].append(button);
-            document.getElementsByTagName("nav")[0].innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='nav-item'>" + i18n.get(tag) + "</div>";
-        }
-    });
 }

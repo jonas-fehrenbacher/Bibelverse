@@ -1,0 +1,13 @@
+.biblePos {
+    background-color: rgb(38, 161, 120);
+    color: white;
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.verse-number {
+    color: rgb(50%, 50%, 50%);
+    font-size: 0.85em;
+}

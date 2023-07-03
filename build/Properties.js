@@ -18,35 +18,34 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _I18n_properties, _I18n_language, _I18n_dirPath;
-import { Properties } from "./Properties.js";
-/**
- * Internationalization (I18n) can load en and de as languages.
- * Use get() to get the translation to an corresponding key.
- * Write your translation inside an data/i18n_<lang>.properties file like this:
- * key = translation
- */
-export class I18n {
+var _Properties_map, _Properties_commentSymbol;
+export class Properties {
     constructor() {
-        _I18n_properties.set(this, void 0);
-        _I18n_language.set(this, void 0);
-        _I18n_dirPath.set(this, void 0);
-        __classPrivateFieldSet(this, _I18n_properties, new Properties, "f");
-        __classPrivateFieldSet(this, _I18n_language, "", "f"); // cannot be loaded here, because constructors may not be async
-        __classPrivateFieldSet(this, _I18n_dirPath, "data/", "f");
+        _Properties_map.set(this, void 0);
+        _Properties_commentSymbol.set(this, void 0);
+        __classPrivateFieldSet(this, _Properties_map, new Map, "f");
+        __classPrivateFieldSet(this, _Properties_commentSymbol, "#", "f");
     }
-    load(language) {
+    load(filepath) {
         return __awaiter(this, void 0, void 0, function* () {
-            __classPrivateFieldSet(this, _I18n_language, language, "f");
-            __classPrivateFieldGet(this, _I18n_properties, "f").load(__classPrivateFieldGet(this, _I18n_dirPath, "f") + "i18n_" + language + ".properties");
+            __classPrivateFieldGet(this, _Properties_map, "f").clear();
+            yield fetch(filepath).then(response => response.text()).then(file => {
+                //file = file.replace(/\s/g, ""); // regex: /<cmd>/g; g: replace all occurrences (global); \s = whitespace
+                file.trim(); // remove leading and trailing white spaces.
+                let lines = file.split(/[\r\n]+/); // split on r, n, rn (for windows and linux) AND filters out empty lines
+                for (let line of lines) {
+                    if (line[0] != __classPrivateFieldGet(this, _Properties_commentSymbol, "f")) {
+                        const key = line.substring(0, line.indexOf("=")).trim();
+                        const val = line.substring(line.indexOf("=") + 1).trim();
+                        __classPrivateFieldGet(this, _Properties_map, "f").set(key, val);
+                    }
+                }
+            });
         });
     }
     get(key) {
-        return __classPrivateFieldGet(this, _I18n_properties, "f").get(key);
-    }
-    getLanguage() {
-        return __classPrivateFieldGet(this, _I18n_language, "f");
+        return __classPrivateFieldGet(this, _Properties_map, "f").get(key);
     }
 }
-_I18n_properties = new WeakMap(), _I18n_language = new WeakMap(), _I18n_dirPath = new WeakMap();
-//# sourceMappingURL=I18n.js.map
+_Properties_map = new WeakMap(), _Properties_commentSymbol = new WeakMap();
+//# sourceMappingURL=Properties.js.map

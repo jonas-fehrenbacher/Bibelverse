@@ -1,34 +1,37 @@
-/*export*/ class I18n
+import { Properties } from "./Properties.js";
+
+/**
+ * Internationalization (I18n) can load en and de as languages.
+ * Use get() to get the translation to an corresponding key.
+ * Write your translation inside an data/i18n_<lang>.properties file like this:
+ * key = translation 
+ */
+export class I18n
 {
-    map: Map<string, string>;
-    language: string;
+    #properties: Properties;
+    #language: string;
+    #dirPath: string;
 
     constructor()
     {
-        this.map = new Map<string, string>;
-        this.language = ""; // cannot be loaded here, because constructors may not be async
+        this.#properties = new Properties;
+        this.#language = ""; // cannot be loaded here, because constructors may not be async
+        this.#dirPath = "data/";
     }
 
-    async load(language: string)
+    async load(language: string): Promise<void>
     {
-        let commentSymbol: string = "#";
-        await fetch("data/i18n_" + language + ".properties").then(response => response.text()).then(file => { 
-            //file = file.replace(/\s/g, ""); // regex: /<cmd>/g; g: replace all occurrences (global); \s = whitespace
-            file.trim(); // remove leading and trailing white spaces.
-            let lines: string[] = file.split(/[\r\n]+/); // split on r, n, rn (for windows and linux) AND filters out empty lines
-            for (let line of lines) 
-            {
-                if (line[0] != commentSymbol) {
-                    let key: string = line.substring(0, line.indexOf("=")).trim();
-                    let val: string = line.substring(line.indexOf("=") + 1).trim();
-                    this.map.set(key, val);
-                }
-            }
-        });
+        this.#language = language;
+        this.#properties.load(this.#dirPath + "i18n_" + language + ".properties");
     }
 
     get(key: string): string | undefined
     {
-        return this.map.get(key);
+        return this.#properties.get(key);
+    }
+
+    getLanguage(): string
+    {
+        return this.#language;
     }
 }

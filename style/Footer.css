@@ -1,0 +1,10 @@
+footer {
+    height: 10rem;
+    background-color: rgb(41,42,53);
+    font-size: 1rem;
+}
+
+footer > #copyright {
+    color: rgb(138, 138, 138);
+    margin: 1rem; /* not padding, because that causes a white border on mobile devices. */
+}

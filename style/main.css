@@ -1,8 +1,8 @@
-@import "verseFlexbox.css";
-
-/*
-    TODO: Seperate to multiple files: header, verses, footer
-*/
+@import "VerseFlexbox.css";
+@import "Footer.css";
+@import "Header.css";
+@import "Navigation.css";
+@import "BibleVerse.css";
 
 body {
     font-family: Arial;
@@ -19,79 +19,4 @@ body {
 
 #app > main {
     flex-grow: 1; /* give every free space to the main content, so that the <footer> is at the bottom */
-}
-
-footer {
-    height: 10rem;
-    background-color: rgb(41,42,53);
-}
-
-footer > #copyright {
-    color: rgb(138, 138, 138);
-    margin: 1rem; /* not padding, because that causes a white border on mobile devices. */
-}
-
-header {
-    background-color: lightSkyBlue;
-    padding: 0.5rem;
-}
-
-#title {
-    display: inline-block;
-    font-size: 2rem;
-    background-color: rgb(179, 225, 253);
-    color: white;
-    border-radius: 0.5rem;
-    padding: 0.25rem;
-    margin: 0.25rem 0.25rem 0rem 0.25rem;
-}
-
-nav {
-    background-color: rgb(41,42,53);
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    row-gap: 0.5rem;
-    column-gap: 0.5rem;
-    padding: 0.5rem;
-}
-
-.nav-item {
-    /*backdrop-filter: blur(8px);*/
-    
-    border-radius: 1rem;
-    padding: 0.3rem;
-    background-color: rgb(255, 255, 255, 70%);
-    cursor:pointer;
-}
-
-/* pressed: */
-.nav-item:active, 
-.active {
-    /*color: rgb(255, 255, 255, 80%);
-    background-color: rgb(38, 161, 120, 60%);*/
-    background-color: rgb(179, 225, 253, 70%);
-}
-
-.nav-item:hover {
-    background-color: rgb(255, 255, 255, 90%);
-}
-
-.active.nav-item:hover {
-    background-color: rgb(179, 225, 253, 90%);
-}
-
-.bibleLocation {
-    background-color: rgb(38, 161, 120);
-    color: white;
-    display: inline-block;
-    border-radius: 0.25rem;
-    padding: 0.25rem;
-    margin-top: 0.5rem;
-}
-
-.verse-number {
-    color: rgb(50%, 50%, 50%);
-    font-size: 0.85em;
 }
