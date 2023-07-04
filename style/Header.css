@@ -1,14 +1,18 @@
 header {
-    background-color: lightSkyBlue;
     padding: 0.5rem;
+    background-color: lightSkyBlue;
 }
 
 #title {
     display: inline-block;
-    font-size: 2rem;
-    background-color: rgb(179, 225, 253);
-    color: white;
+    
     border-radius: 0.5rem;
     padding: 0.25rem;
     margin: 0.25rem 0.25rem 0rem 0.25rem;
+
+    font-size: 2rem;
+    background-color: rgb(179, 225, 253);
+    color: white;
+    
+    text-decoration: none;
 }

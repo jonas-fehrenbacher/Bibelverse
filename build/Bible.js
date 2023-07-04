@@ -133,7 +133,7 @@ export class Bible {
                         (chapter == endPos.chapter - 1 && chapter != startPos.chapter - 1 && verseNumber <= endPos.verse - 1)) {
                         text += verse;
                         if (!isLastVerse) {
-                            text += " <span class=\"verse-number\">" + (verseNumber + 1) + "</span> ";
+                            text += " <span class=\"bibleVerse-number\">" + (verseNumber + 1) + "</span> ";
                         }
                     }
                 }

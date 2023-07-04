@@ -106,7 +106,7 @@ class App
                 // <span> is required because bible.get() returns text which has tags and they only work like that.
 
                 let positionContent = document.createElement("div");
-                positionContent.classList.add("biblePos");
+                positionContent.classList.add("bibleVerse-positionBox");
                 positionContent.append(bibleQuote.getPositionStr(this.#i18n));
                 let positionBox = document.createElement("div");
                 positionBox.append(positionContent);

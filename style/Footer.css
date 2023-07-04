@@ -1,10 +1,11 @@
 footer {
-    height: 10rem;
-    background-color: rgb(41,42,53);
+    min-height: 10rem; /* min because small screen require more height to fit everything inside. */
+
     font-size: 1rem;
+    background-color: rgb(41,42,53);
 }
 
 footer > #copyright {
-    color: rgb(138, 138, 138);
     margin: 1rem; /* not padding, because that causes a white border on mobile devices. */
+    color: rgb(138, 138, 138);
 }

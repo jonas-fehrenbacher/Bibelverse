@@ -18,24 +18,27 @@
     align-content: center; /*multi-line*/
     row-gap: 0.5rem;
     column-gap: 0.5rem;
+
     padding: 0.5rem;
+    
     background-color: rgb(245, 245, 245);
 }
 
 .verseFlexbox-item {
-    flex-basis: 20rem; /*max size.*/
+    flex-basis: 20rem; /* max size */
     flex-grow: 1; /* fill remaining horizontal space */
-    background-color: var(--verseFlexbox-soft-lightBG);
-    color: var(--verseFlexbox-soft-lightFG);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
 
-    /* center text: */
     display: flex;
-    justify-content: space-between; /*center*/
+    justify-content: space-between; /* or: center */
     align-content: stretch;
     flex-direction: column;
+
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    
+    text-align: center;
+    background-color: var(--verseFlexbox-soft-lightBG);
+    color: var(--verseFlexbox-soft-lightFG);
 }
 
 .verseFlexbox-item:nth-child(even) {

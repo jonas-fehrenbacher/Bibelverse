@@ -1,13 +1,17 @@
-.biblePos {
-    background-color: rgb(38, 161, 120);
-    color: white;
+/* Box which shows where the verse is inside the bible (book, chapter, verse). */
+.bibleVerse-positionBox {
     display: inline-block;
+
     border-radius: 0.25rem;
     padding: 0.25rem;
     margin-top: 0.5rem;
+
+    background-color: rgb(38, 161, 120);
+    color: white;
 }
 
-.verse-number {
+/* The verse number inside a quote. */
+.bibleVerse-number {
+    font-size: 0.95rem;
     color: rgb(50%, 50%, 50%);
-    font-size: 0.85em;
 }

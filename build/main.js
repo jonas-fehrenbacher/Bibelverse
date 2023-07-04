@@ -111,7 +111,7 @@ _App_schlachter1951 = new WeakMap(), _App_bibleQuotes = new WeakMap(), _App_tagF
             text.innerHTML = "<span>" + __classPrivateFieldGet(this, _App_schlachter1951, "f").get(bibleQuote.startPos, bibleQuote.endPos) + "</span>";
             // <span> is required because bible.get() returns text which has tags and they only work like that.
             let positionContent = document.createElement("div");
-            positionContent.classList.add("biblePos");
+            positionContent.classList.add("bibleVerse-positionBox");
             positionContent.append(bibleQuote.getPositionStr(__classPrivateFieldGet(this, _App_i18n, "f")));
             let positionBox = document.createElement("div");
             positionBox.append(positionContent);
