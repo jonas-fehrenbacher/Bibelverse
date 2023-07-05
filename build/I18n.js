@@ -38,7 +38,7 @@ export class I18n {
     load(language) {
         return __awaiter(this, void 0, void 0, function* () {
             __classPrivateFieldSet(this, _I18n_language, language, "f");
-            __classPrivateFieldGet(this, _I18n_properties, "f").load(__classPrivateFieldGet(this, _I18n_dirPath, "f") + "i18n_" + language + ".properties");
+            yield __classPrivateFieldGet(this, _I18n_properties, "f").load(__classPrivateFieldGet(this, _I18n_dirPath, "f") + "i18n_" + language + ".properties");
         });
     }
     get(key) {

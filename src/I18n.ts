@@ -22,7 +22,7 @@ export class I18n
     async load(language: string): Promise<void>
     {
         this.#language = language;
-        this.#properties.load(this.#dirPath + "i18n_" + language + ".properties");
+        await this.#properties.load(this.#dirPath + "i18n_" + language + ".properties");
     }
 
     get(key: string): string | undefined

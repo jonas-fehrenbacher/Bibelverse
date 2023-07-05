@@ -35,6 +35,8 @@
 
     padding: 0.5rem;
     border-radius: 0.5rem;
+    box-shadow: 2px 2px 50px 1px rgb(194, 194, 194) inset; /* x, y, blur-radius, spread-radius; inset: inside the box; see: https://www.w3schools.com/cssref/playdemo.php?filename=playcss_box-shadow */
+    box-shadow: 1px 1px 5px;
     
     text-align: center;
     background-color: var(--verseFlexbox-soft-lightBG);

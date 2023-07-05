@@ -1,0 +1,24 @@
+.comboBox {
+    /* reset */
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none; /* remove arrow */
+    border: none;
+    
+    padding: 0.6rem;
+    border-radius: 0.25rem;
+    /*width: 8rem;*/
+    box-shadow: 0.1rem 0.1rem 0.25rem 0.05rem rgba(0,0,0,0.3);
+
+    background-color: rgb(41,42,53);
+    
+    color: white;
+
+    outline: none; /* removes border when combobox is selected (chrome) */
+    cursor: pointer;
+}
+
+/*
+    select > option can not really be manipulated. Either create a own comboBox or stick to the default.
+    See: https://www.w3schools.com/howto/howto_custom_select.asp
+*/

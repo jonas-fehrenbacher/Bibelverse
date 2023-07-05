@@ -3,6 +3,7 @@
 @import "Header.css";
 @import "Navigation.css";
 @import "BibleVerse.css";
+@import "ComboBox.css";
 
 /* reset */
 *,
@@ -27,6 +28,11 @@ body {
     font-family: Arial;
     font-size: 120%; /* default font size. */
     line-height: 1.25; /* distance of text lines, default is ca. 1.2 */
+}
+
+hr {
+    border: 0.1rem solid rgb(145, 145, 145);
+    border-radius: 10rem;
 }
 
 #app {
