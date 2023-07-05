@@ -113,6 +113,12 @@ export class BibleQuote {
         return pos;
     }
 }
+export var BibleTranslation;
+(function (BibleTranslation) {
+    BibleTranslation[BibleTranslation["Schlachter1951"] = 0] = "Schlachter1951";
+    BibleTranslation[BibleTranslation["Eberfelder1905"] = 1] = "Eberfelder1905";
+    BibleTranslation[BibleTranslation["Luther1545"] = 2] = "Luther1545";
+})(BibleTranslation || (BibleTranslation = {}));
 export class Bible {
     constructor(verses, name, htmlCopyright) {
         this.verses = verses;
@@ -142,10 +148,6 @@ export class Bible {
         return text;
     }
 }
-// https://www.bibleserver.com/SLT/
-export function createSchlachter2000() {
-    return new Bible([], "Schlachter2000", "");
-}
 export function createSchlachter1951() {
     return __awaiter(this, void 0, void 0, function* () {
         let bible = new Bible([], "Schlachter1951", "copyright © 1951 Genfer Bibelgeschellschaft (Geneva Bible Society)<br/>Language: Deutsch (German, Standard)<br/>Translation by: Franz-Eugen Schlachter<br/>Contributor: Genfer Bibelgesellschaft");
@@ -155,6 +157,81 @@ export function createSchlachter1951() {
                 bible.verses.push(book);
             }
         });
+        return bible;
+    });
+}
+export function createEberfelder1905() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let bible = new Bible([], "Eberfelder1905", "This Bible is in the Public Domain.");
+        yield fetch("data/elberfelder1905.json").then(response => response.json()).then(json => {
+            let currChapter = 1;
+            let currBook = 1;
+            let chapter = [];
+            let book = [];
+            for (let verse of json.verses) {
+                // Note that there are books with only one chapter (even successively).
+                // Fill book:
+                if (currBook == verse.book && verse.chapter == currChapter) {
+                    chapter.push(verse.text);
+                }
+                else {
+                    book.push(chapter);
+                    chapter = [];
+                    chapter.push(verse.text);
+                    currChapter = verse.chapter;
+                }
+                // Add book to bible:
+                if (currBook != verse.book) {
+                    bible.verses.push(book);
+                    book = [];
+                    currBook = verse.book;
+                }
+            }
+            // Last book:
+            book.push(chapter);
+            bible.verses.push(book);
+        });
+        return bible;
+    });
+}
+export function createLuther1545() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let bible = new Bible([], "Luther1545", "This Bible is in the Public Domain.");
+        yield fetch("data/luther1545.json").then(response => response.json()).then(json => {
+            let currChapter = 1;
+            let currBook = 1;
+            let chapter = [];
+            let book = [];
+            for (let verse of json.verses) {
+                // Note that there are books with only one chapter (even successively).
+                // Fill book:
+                if (currBook == verse.book && verse.chapter == currChapter) {
+                    chapter.push(verse.text);
+                }
+                else {
+                    book.push(chapter);
+                    chapter = [];
+                    chapter.push(verse.text);
+                    currChapter = verse.chapter;
+                }
+                // Add book to bible:
+                if (currBook != verse.book) {
+                    bible.verses.push(book);
+                    book = [];
+                    currBook = verse.book;
+                }
+            }
+            // Last book:
+            book.push(chapter);
+            bible.verses.push(book);
+        });
+        return bible;
+    });
+}
+export function createKJV() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let bible = new Bible([], "KJV", "This Bible is in the Public Domain in most parts of the world. However, in the United Kingdom, it is under perpetual Crown copyright.");
+        // Needs a license in the UK..
         return bible;
     });
 }

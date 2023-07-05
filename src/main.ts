@@ -1,27 +1,32 @@
-import { Bible, BibleBook, BiblePassagePos, BibleQuote, BibleTag, createSchlachter1951 } from "./Bible.js";
+import { Bible, BibleBook, BiblePassagePos, BibleQuote, BibleTag, BibleTranslation, createEberfelder1905, createLuther1545, createSchlachter1951 } from "./Bible.js";
 import { I18n } from "./I18n.js";
 
 class App
 {
-    #schlachter1951: Bible;
-    #bibleQuotes:    BibleQuote[];
-    #tagFilter:      BibleTag;
-    #verseFlexbox:   HTMLElement | null;
-    #i18n:           I18n;
+    #bibleMap:         Map<BibleTranslation, Bible>;
+    #bibleQuotes:      BibleQuote[];
+    #tagFilter:        BibleTag;
+    #verseFlexbox:     HTMLElement | null;
+    #i18n:             I18n;
+    #bibleTranslation: BibleTranslation; // TODO: compare translations
 
     constructor() {
         this.#tagFilter = BibleTag.EternalLife;
-        this.#schlachter1951 = new Bible([], "", "");
+        this.#bibleMap = new Map<BibleTranslation, Bible>;
         this.#bibleQuotes = [];
         this.#verseFlexbox = document.getElementById("verseFlexbox");
         this.#i18n = new I18n();
+        this.#bibleTranslation = BibleTranslation.Schlachter1951;
     }
 
     // Called when webpage is loading.
     async init(): Promise<void>
     {
-        this.#schlachter1951 = await createSchlachter1951();
+        this.#bibleMap.set(BibleTranslation.Schlachter1951, await createSchlachter1951());
+        this.#bibleMap.set(BibleTranslation.Eberfelder1905, await createEberfelder1905());
+        this.#bibleMap.set(BibleTranslation.Luther1545, await createLuther1545());
         this.#i18n.load("de");
+        console.log(this.#bibleMap);
 
         // Load bible quotes:
         // File reading: 
@@ -47,15 +52,23 @@ class App
         });
 
         // Load navigation:
-        await this.#displayBibleTags(this.#i18n);
+        await this.#initTagBar(this.#i18n);
+        this.#initBibleBar();
 
         // Select tag:
-        const navElement: HTMLElement = document.getElementsByTagName("nav")[0];
-        this.#onTagEvent(BibleTag.EternalLife, navElement.getElementsByClassName("nav-item")[0] as HTMLDivElement);
+        const tagBar: HTMLElement | null = document.getElementById("tagBar");
+        this.#onTagEvent(BibleTag.EternalLife, tagBar?.getElementsByClassName("tagBar-item")[0] as HTMLDivElement); // TODO: use ids for every tag and select an default tag
+
+        // Select bible translation:
+        const bibleBar: HTMLElement | null = document.getElementById("bibleBar");
+        this.#onBibleTranslationEvent(this.#bibleTranslation, bibleBar?.getElementsByClassName("bibleBar-item")[0] as HTMLDivElement); // TODO: use ids for every translation and select an default translation
 
         // Set copyright:
-        let copyrightElement = document.getElementById("copyright");
-        if (copyrightElement) copyrightElement.innerHTML = this.#schlachter1951.htmlCopyright;
+        let copyrightElement: HTMLElement | null = document.getElementById("copyright");
+        let bible:            Bible | undefined  = this.#bibleMap.get(this.#bibleTranslation);
+        if (copyrightElement && bible) {
+            copyrightElement.innerHTML = bible.htmlCopyright;
+        }
 
         // Set title:
         let titleElement: HTMLElement | null = document.getElementById("title");
@@ -67,22 +80,41 @@ class App
         }
     }
 
-    async #displayBibleTags(i18n: I18n): Promise<void>
+    async #initTagBar(i18n: I18n): Promise<void>
     {
         await fetch("data/bibleQuotes.json").then(response => response.json()).then(json => {
             let tag: string = "";
             for (tag of json.tags) {
+                // (1) Create tag btn
                 let button: HTMLDivElement = document.createElement("div");
-                button.classList.add("nav-item");
+                button.classList.add("tagBar-item");
                 button.append(String(i18n.get(tag)));
                 button.addEventListener("click", this.#onTagEvent.bind(null, BibleTag[tag as keyof typeof BibleTag], button), false);
 
-                let tagBox: HTMLElement = document.getElementsByTagName("nav")[0];
-                tagBox.append(button);
+                // (2) Add tag btn
+                const tagBar: HTMLElement | null = document.getElementById("tagBar");
+                tagBar?.append(button);
 
-                //document.getElementsByTagName("nav")[0].innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='nav-item'>" + i18n.get(tag) + "</div>";
+                //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
             }
         });
+    }
+
+    #initBibleBar(): void
+    {
+        for (let [key, bible] of this.#bibleMap) {
+            // (1) Create tag btn
+            let button: HTMLDivElement = document.createElement("div");
+            button.classList.add("bibleBar-item");
+            button.append(bible.name);
+            button.addEventListener("click", this.#onBibleTranslationEvent.bind(null, key, button), false);
+
+            // (2) Add tag btn
+            const bibleBar: HTMLElement | null = document.getElementById("bibleBar");
+            bibleBar?.append(button);
+
+            //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+        }
     }
 
     #displayQuotes(bibleTag: BibleTag): void
@@ -101,16 +133,22 @@ class App
         for (let bibleQuote of this.#bibleQuotes) {
             if (bibleQuote.tags.find(a => a == this.#tagFilter) != undefined) {
                 //.. tag found
+
+                // (1) Create verse text
+                let bible: Bible | undefined  = this.#bibleMap.get(this.#bibleTranslation);
                 let text = document.createElement("div");
-                text.innerHTML = "<span>" + this.#schlachter1951.get(bibleQuote.startPos, bibleQuote.endPos) + "</span>";
+                text.innerHTML = "<span>" + bible?.get(bibleQuote.startPos, bibleQuote.endPos) + "</span>";
                 // <span> is required because bible.get() returns text which has tags and they only work like that.
 
+                // (2) Create position box
+                // 'positionContent' is required, so that the background color applies only around the position text. 
                 let positionContent = document.createElement("div");
                 positionContent.classList.add("bibleVerse-positionBox");
                 positionContent.append(bibleQuote.getPositionStr(this.#i18n));
                 let positionBox = document.createElement("div");
                 positionBox.append(positionContent);
 
+                // (3) Create new verse
                 let newVerse = document.createElement("div");
                 newVerse.classList.add("verseFlexbox-item");
                 newVerse.append(text);
@@ -118,6 +156,29 @@ class App
 
                 this.#verseFlexbox?.append(newVerse);
             }
+        }
+    }
+
+    #onBibleTranslationEvent(bibleTranslation: BibleTranslation, button: HTMLDivElement): void
+    {
+        app.#bibleTranslation = bibleTranslation;
+        app.#displayQuotes(app.#tagFilter);
+
+        // clear 'active' class:
+        let buttons : HTMLCollection | undefined = button.parentElement?.children;
+        if (buttons) {
+            for (let it of buttons) {
+                it.classList.remove("active");
+            }
+        }
+        // Set clicked button active:
+        button.classList.add("active");
+
+        // Set copyright:
+        let copyrightElement: HTMLElement | null = document.getElementById("copyright");
+        let bible:            Bible | undefined  = app.#bibleMap.get(app.#bibleTranslation);
+        if (copyrightElement && bible) {
+            copyrightElement.innerHTML = bible.htmlCopyright;
         }
     }
 

@@ -67,6 +67,13 @@ export class BibleQuote
     }
 }
 
+export enum BibleTranslation
+{
+    Schlachter1951,
+    Eberfelder1905,
+    Luther1545
+}
+
 export class Bible
 {
     verses: string[][][]; //< [book][chapter][verse]
@@ -108,12 +115,6 @@ export class Bible
     }
 }
 
-// https://www.bibleserver.com/SLT/
-export function createSchlachter2000(): Bible
-{
-    return new Bible([], "Schlachter2000", "");
-}
-
 export async function createSchlachter1951(): Promise<Bible>
 {
     let bible : Bible = new Bible(
@@ -126,6 +127,97 @@ export async function createSchlachter1951(): Promise<Bible>
             bible.verses.push(book);
         }
     });
+
+    return bible;
+}
+
+export async function createEberfelder1905(): Promise<Bible>
+{
+    let bible : Bible = new Bible(
+        [], "Eberfelder1905", 
+        "This Bible is in the Public Domain."
+    );
+    await fetch("data/elberfelder1905.json").then(response => response.json()).then(json => { 
+        let currChapter: number = 1;
+        let currBook: number = 1;
+        let chapter: string[] = [];
+        let book : string[][] = [];
+        for (let verse of json.verses) {
+            // Note that there are books with only one chapter (even successively).
+
+            // Fill book:
+            if (currBook == verse.book && verse.chapter == currChapter) {
+                chapter.push(verse.text);
+            }
+            else {
+                book.push(chapter);
+                chapter = [];
+                chapter.push(verse.text);
+                currChapter = verse.chapter;
+            }
+
+            // Add book to bible:
+            if (currBook != verse.book) {
+                bible.verses.push(book);
+                book = [];
+                currBook = verse.book;
+            }
+        }
+        // Last book:
+        book.push(chapter);
+        bible.verses.push(book);
+    });
+
+    return bible;
+}
+
+export async function createLuther1545(): Promise<Bible>
+{
+    let bible : Bible = new Bible(
+        [], "Luther1545", 
+        "This Bible is in the Public Domain."
+    );
+    await fetch("data/luther1545.json").then(response => response.json()).then(json => { 
+        let currChapter: number = 1;
+        let currBook: number = 1;
+        let chapter: string[] = [];
+        let book : string[][] = [];
+        for (let verse of json.verses) {
+            // Note that there are books with only one chapter (even successively).
+
+            // Fill book:
+            if (currBook == verse.book && verse.chapter == currChapter) {
+                chapter.push(verse.text);
+            }
+            else {
+                book.push(chapter);
+                chapter = [];
+                chapter.push(verse.text);
+                currChapter = verse.chapter;
+            }
+
+            // Add book to bible:
+            if (currBook != verse.book) {
+                bible.verses.push(book);
+                book = [];
+                currBook = verse.book;
+            }
+        }
+        // Last book:
+        book.push(chapter);
+        bible.verses.push(book);
+    });
+
+    return bible;
+}
+
+export async function createKJV(): Promise<Bible>
+{
+    let bible : Bible = new Bible(
+        [], "KJV", 
+        "This Bible is in the Public Domain in most parts of the world. However, in the United Kingdom, it is under perpetual Crown copyright."
+    );
+    // Needs a license in the UK..
 
     return bible;
 }

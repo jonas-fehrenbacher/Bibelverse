@@ -5,6 +5,17 @@
 
 nav {
     display: flex;
+    flex-direction: column;
+
+    background-color: rgb(41,42,53);
+}
+
+/* ///////////////////////////////////////////////////////////////////////////////////////
+    Tag bar
+/////////////////////////////////////////////////////////////////////////////////////// */
+
+#tagBar {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
@@ -12,11 +23,11 @@ nav {
     column-gap: 0.5rem;
 
     padding: 0.5rem;
-    
-    background-color: rgb(41,42,53);
 }
 
-.nav-item {
+/*.nav-item*/
+
+.tagBar-item {
     border-radius: 1rem;
     padding: 0.3rem;
 
@@ -28,17 +39,65 @@ nav {
 }
 
 /* pressed: */
-.nav-item:active, 
+.tagBar-item:active, 
 .active {
     /*color: rgb(255, 255, 255, 80%);
     background-color: rgb(38, 161, 120, 60%);*/
     background-color: rgb(var(--tag-selected-color), 70%);
 }
 
-.nav-item:hover {
+.tagBar-item:hover {
     background-color: rgb(var(--tag-default-color), 90%);
 }
 
-.active.nav-item:hover {
+.active.tagBar-item:hover {
+    background-color: rgb(var(--tag-selected-color), 90%);
+}
+
+/* ///////////////////////////////////////////////////////////////////////////////////////
+    Bible bar
+/////////////////////////////////////////////////////////////////////////////////////// */
+
+#bibleBar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+
+    padding: 0.5rem;
+}
+
+/*.nav-item*/
+
+.bibleBar-item {
+    flex: 1;
+    
+    border-radius: 0.25rem;
+    padding: 0.3rem;
+    
+    text-align: center;
+
+    background-color: rgb(var(--tag-default-color), 70%);
+    /*backdrop-filter: blur(8px);*/
+    
+    cursor: pointer;
+    user-select: none; /* no text selection */
+}
+
+/* pressed: */
+.bibleBar-item:active, 
+.active {
+    /*color: rgb(255, 255, 255, 80%);
+    background-color: rgb(38, 161, 120, 60%);*/
+    background-color: rgb(var(--tag-selected-color), 70%);
+}
+
+.bibleBar-item:hover {
+    background-color: rgb(var(--tag-default-color), 90%);
+}
+
+.active.bibleBar-item:hover {
     background-color: rgb(var(--tag-selected-color), 90%);
 }

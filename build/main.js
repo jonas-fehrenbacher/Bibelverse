@@ -18,28 +18,33 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _App_instances, _App_schlachter1951, _App_bibleQuotes, _App_tagFilter, _App_verseFlexbox, _App_i18n, _App_displayBibleTags, _App_displayQuotes, _App_onTagEvent;
-import { Bible, BibleBook, BiblePassagePos, BibleQuote, BibleTag, createSchlachter1951 } from "./Bible.js";
+var _App_instances, _App_bibleMap, _App_bibleQuotes, _App_tagFilter, _App_verseFlexbox, _App_i18n, _App_bibleTranslation, _App_initTagBar, _App_initBibleBar, _App_displayQuotes, _App_onBibleTranslationEvent, _App_onTagEvent;
+import { BibleBook, BiblePassagePos, BibleQuote, BibleTag, BibleTranslation, createEberfelder1905, createLuther1545, createSchlachter1951 } from "./Bible.js";
 import { I18n } from "./I18n.js";
 class App {
     constructor() {
         _App_instances.add(this);
-        _App_schlachter1951.set(this, void 0);
+        _App_bibleMap.set(this, void 0);
         _App_bibleQuotes.set(this, void 0);
         _App_tagFilter.set(this, void 0);
         _App_verseFlexbox.set(this, void 0);
         _App_i18n.set(this, void 0);
+        _App_bibleTranslation.set(this, void 0); // TODO: compare translations
         __classPrivateFieldSet(this, _App_tagFilter, BibleTag.EternalLife, "f");
-        __classPrivateFieldSet(this, _App_schlachter1951, new Bible([], "", ""), "f");
+        __classPrivateFieldSet(this, _App_bibleMap, new Map, "f");
         __classPrivateFieldSet(this, _App_bibleQuotes, [], "f");
         __classPrivateFieldSet(this, _App_verseFlexbox, document.getElementById("verseFlexbox"), "f");
         __classPrivateFieldSet(this, _App_i18n, new I18n(), "f");
+        __classPrivateFieldSet(this, _App_bibleTranslation, BibleTranslation.Schlachter1951, "f");
     }
     // Called when webpage is loading.
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            __classPrivateFieldSet(this, _App_schlachter1951, yield createSchlachter1951(), "f");
+            __classPrivateFieldGet(this, _App_bibleMap, "f").set(BibleTranslation.Schlachter1951, yield createSchlachter1951());
+            __classPrivateFieldGet(this, _App_bibleMap, "f").set(BibleTranslation.Eberfelder1905, yield createEberfelder1905());
+            __classPrivateFieldGet(this, _App_bibleMap, "f").set(BibleTranslation.Luther1545, yield createLuther1545());
             __classPrivateFieldGet(this, _App_i18n, "f").load("de");
+            console.log(__classPrivateFieldGet(this, _App_bibleMap, "f"));
             // Load bible quotes:
             // File reading: 
             // Reading files was done with 'XMLHttpRequest', but now there is the fetch API which is a lot simpler.
@@ -59,14 +64,20 @@ class App {
                 }
             });
             // Load navigation:
-            yield __classPrivateFieldGet(this, _App_instances, "m", _App_displayBibleTags).call(this, __classPrivateFieldGet(this, _App_i18n, "f"));
+            yield __classPrivateFieldGet(this, _App_instances, "m", _App_initTagBar).call(this, __classPrivateFieldGet(this, _App_i18n, "f"));
+            __classPrivateFieldGet(this, _App_instances, "m", _App_initBibleBar).call(this);
             // Select tag:
-            const navElement = document.getElementsByTagName("nav")[0];
-            __classPrivateFieldGet(this, _App_instances, "m", _App_onTagEvent).call(this, BibleTag.EternalLife, navElement.getElementsByClassName("nav-item")[0]);
+            const tagBar = document.getElementById("tagBar");
+            __classPrivateFieldGet(this, _App_instances, "m", _App_onTagEvent).call(this, BibleTag.EternalLife, tagBar === null || tagBar === void 0 ? void 0 : tagBar.getElementsByClassName("tagBar-item")[0]); // TODO: use ids for every tag and select an default tag
+            // Select bible translation:
+            const bibleBar = document.getElementById("bibleBar");
+            __classPrivateFieldGet(this, _App_instances, "m", _App_onBibleTranslationEvent).call(this, __classPrivateFieldGet(this, _App_bibleTranslation, "f"), bibleBar === null || bibleBar === void 0 ? void 0 : bibleBar.getElementsByClassName("bibleBar-item")[0]); // TODO: use ids for every translation and select an default translation
             // Set copyright:
             let copyrightElement = document.getElementById("copyright");
-            if (copyrightElement)
-                copyrightElement.innerHTML = __classPrivateFieldGet(this, _App_schlachter1951, "f").htmlCopyright;
+            let bible = __classPrivateFieldGet(this, _App_bibleMap, "f").get(__classPrivateFieldGet(this, _App_bibleTranslation, "f"));
+            if (copyrightElement && bible) {
+                copyrightElement.innerHTML = bible.htmlCopyright;
+            }
             // Set title:
             let titleElement = document.getElementById("title");
             if (titleElement) {
@@ -78,21 +89,35 @@ class App {
         });
     }
 }
-_App_schlachter1951 = new WeakMap(), _App_bibleQuotes = new WeakMap(), _App_tagFilter = new WeakMap(), _App_verseFlexbox = new WeakMap(), _App_i18n = new WeakMap(), _App_instances = new WeakSet(), _App_displayBibleTags = function _App_displayBibleTags(i18n) {
+_App_bibleMap = new WeakMap(), _App_bibleQuotes = new WeakMap(), _App_tagFilter = new WeakMap(), _App_verseFlexbox = new WeakMap(), _App_i18n = new WeakMap(), _App_bibleTranslation = new WeakMap(), _App_instances = new WeakSet(), _App_initTagBar = function _App_initTagBar(i18n) {
     return __awaiter(this, void 0, void 0, function* () {
         yield fetch("data/bibleQuotes.json").then(response => response.json()).then(json => {
             let tag = "";
             for (tag of json.tags) {
+                // (1) Create tag btn
                 let button = document.createElement("div");
-                button.classList.add("nav-item");
+                button.classList.add("tagBar-item");
                 button.append(String(i18n.get(tag)));
                 button.addEventListener("click", __classPrivateFieldGet(this, _App_instances, "m", _App_onTagEvent).bind(null, BibleTag[tag], button), false);
-                let tagBox = document.getElementsByTagName("nav")[0];
-                tagBox.append(button);
-                //document.getElementsByTagName("nav")[0].innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='nav-item'>" + i18n.get(tag) + "</div>";
+                // (2) Add tag btn
+                const tagBar = document.getElementById("tagBar");
+                tagBar === null || tagBar === void 0 ? void 0 : tagBar.append(button);
+                //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
             }
         });
     });
+}, _App_initBibleBar = function _App_initBibleBar() {
+    for (let [key, bible] of __classPrivateFieldGet(this, _App_bibleMap, "f")) {
+        // (1) Create tag btn
+        let button = document.createElement("div");
+        button.classList.add("bibleBar-item");
+        button.append(bible.name);
+        button.addEventListener("click", __classPrivateFieldGet(this, _App_instances, "m", _App_onBibleTranslationEvent).bind(null, key, button), false);
+        // (2) Add tag btn
+        const bibleBar = document.getElementById("bibleBar");
+        bibleBar === null || bibleBar === void 0 ? void 0 : bibleBar.append(button);
+        //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+    }
 }, _App_displayQuotes = function _App_displayQuotes(bibleTag) {
     var _a;
     // Empty verse flexbox:
@@ -107,20 +132,44 @@ _App_schlachter1951 = new WeakMap(), _App_bibleQuotes = new WeakMap(), _App_tagF
     for (let bibleQuote of __classPrivateFieldGet(this, _App_bibleQuotes, "f")) {
         if (bibleQuote.tags.find(a => a == __classPrivateFieldGet(this, _App_tagFilter, "f")) != undefined) {
             //.. tag found
+            // (1) Create verse text
+            let bible = __classPrivateFieldGet(this, _App_bibleMap, "f").get(__classPrivateFieldGet(this, _App_bibleTranslation, "f"));
             let text = document.createElement("div");
-            text.innerHTML = "<span>" + __classPrivateFieldGet(this, _App_schlachter1951, "f").get(bibleQuote.startPos, bibleQuote.endPos) + "</span>";
+            text.innerHTML = "<span>" + (bible === null || bible === void 0 ? void 0 : bible.get(bibleQuote.startPos, bibleQuote.endPos)) + "</span>";
             // <span> is required because bible.get() returns text which has tags and they only work like that.
+            // (2) Create position box
+            // 'positionContent' is required, so that the background color applies only around the position text. 
             let positionContent = document.createElement("div");
             positionContent.classList.add("bibleVerse-positionBox");
             positionContent.append(bibleQuote.getPositionStr(__classPrivateFieldGet(this, _App_i18n, "f")));
             let positionBox = document.createElement("div");
             positionBox.append(positionContent);
+            // (3) Create new verse
             let newVerse = document.createElement("div");
             newVerse.classList.add("verseFlexbox-item");
             newVerse.append(text);
             newVerse.append(positionBox);
             (_a = __classPrivateFieldGet(this, _App_verseFlexbox, "f")) === null || _a === void 0 ? void 0 : _a.append(newVerse);
         }
+    }
+}, _App_onBibleTranslationEvent = function _App_onBibleTranslationEvent(bibleTranslation, button) {
+    var _a;
+    __classPrivateFieldSet(app, _App_bibleTranslation, bibleTranslation, "f");
+    __classPrivateFieldGet(app, _App_instances, "m", _App_displayQuotes).call(app, __classPrivateFieldGet(app, _App_tagFilter, "f"));
+    // clear 'active' class:
+    let buttons = (_a = button.parentElement) === null || _a === void 0 ? void 0 : _a.children;
+    if (buttons) {
+        for (let it of buttons) {
+            it.classList.remove("active");
+        }
+    }
+    // Set clicked button active:
+    button.classList.add("active");
+    // Set copyright:
+    let copyrightElement = document.getElementById("copyright");
+    let bible = __classPrivateFieldGet(app, _App_bibleMap, "f").get(__classPrivateFieldGet(app, _App_bibleTranslation, "f"));
+    if (copyrightElement && bible) {
+        copyrightElement.innerHTML = bible.htmlCopyright;
     }
 }, _App_onTagEvent = function _App_onTagEvent(bibleTag, button) {
     var _a;
