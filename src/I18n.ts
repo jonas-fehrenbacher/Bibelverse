@@ -1,4 +1,5 @@
 import { Properties } from "./Properties.js";
+import { DataPath } from "./DataPath.js";
 
 /**
  * Internationalization (I18n) can load en and de as languages.
@@ -9,20 +10,18 @@ import { Properties } from "./Properties.js";
 export class I18n
 {
     #properties: Properties;
-    #language: string;
-    #dirPath: string;
+    #language:   string;
 
     constructor()
     {
         this.#properties = new Properties;
-        this.#language = ""; // cannot be loaded here, because constructors may not be async
-        this.#dirPath = "data/";
+        this.#language   = ""; // cannot be loaded here, because constructors may not be async
     }
 
     async load(language: string): Promise<void>
     {
         this.#language = language;
-        await this.#properties.load(this.#dirPath + "i18n_" + language + ".properties");
+        await this.#properties.load(DataPath.I18nDir + "i18n_" + language + ".properties");
     }
 
     get(key: string): string | undefined

@@ -1,67 +1,83 @@
 import { I18n } from "./I18n.js";
-import { BibleTag } from "./Bible.js";
+import { DataPath } from "./DataPath.js";
+import { MessageBus, Message } from "./MessageBus.js";
 
 export class TagBar
 {
-    #selected: BibleTag;
-    #displayQuotes: () => void;
-    #i18nRef: I18n;
+    #selected:      string;
+    #messageBusRef: MessageBus;
+    #i18nRef:       I18n;
+    #gui:           HTMLElement | null; /* graphical user interface */
 
-    constructor(i18nRef: I18n) {
-        this.#selected = BibleTag.EternalLife;
-        this.#displayQuotes = () => {};
-        this.#i18nRef = i18nRef;
+    constructor(i18nRef: I18n, messageBusRef: MessageBus) {
+        this.#selected      = "";
+        this.#messageBusRef = messageBusRef;
+        this.#i18nRef       = i18nRef;
+        this.#gui           = document.getElementById("tagBar");
+
+        this.#messageBusRef.add(this.#onMessage.bind(this));
     }
 
-    async init(displayQuotes: () => void): Promise<void>
+    async init(): Promise<void>
     {
-        this.#displayQuotes = displayQuotes;
-
         // Create tags:
-        await fetch("data/bibleQuotes.json").then(response => response.json()).then(json => {
-            let tag: string = "";
-            for (tag of json.tags) {
-                // (1) Create tag btn
-                let button: HTMLDivElement = document.createElement("div");
-                //button.id = "tagBar-item-id-" + tag;
-                (button as any).langKey = tag;
-                button.classList.add("tagBar-item");
-                button.append(String(this.#i18nRef.get(tag)));
-                button.addEventListener("click", this.#onEvent.bind(null, this, BibleTag[tag as keyof typeof BibleTag], button), false);
-
-                // (2) Add tag btn
-                const tagBar: HTMLElement | null = document.getElementById("tagBar");
-                tagBar?.append(button);
-
-                //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+        let tags: string[] = [];
+        await fetch(DataPath.BibleQuotes).then(response => response.json()).then(json => {
+            for (let tag of json.tags) {
+                tags.push(tag);
             }
         });
 
+        // Create tag buttons:
+        for (let tag of tags) {
+            // (1) Create tag btn
+            let button: HTMLDivElement = document.createElement("div");
+            //button.id = "tagBar-item-id-" + tag;
+            (button as any).langKey = tag;
+            button.classList.add("tagBar-item");
+            let tagName: string | undefined = this.#i18nRef.get(tag);
+            if (tagName) {
+                button.append(tagName);
+            }
+            else {
+                button.append(tag + "[i18n-undefined]");
+            }
+            button.addEventListener("click", this.#onEvent.bind(this, tag, button), false);
+
+            // (2) Add tag btn
+            this.#gui?.append(button);
+
+            //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(tag, this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+        }
+
         // Select tag:
-        const tagBar: HTMLElement | null = document.getElementById("tagBar");
-        this.#onEvent(this, BibleTag.EternalLife, tagBar?.getElementsByClassName("tagBar-item")[0] as HTMLDivElement); // TODO: use ids for every tag and select an default tag
+        if (tags.length > 0) {
+            this.#onEvent(tags[0], this.#gui?.getElementsByClassName("tagBar-item")[0] as HTMLDivElement); // TODO: use ids for every tag and select an default tag
+        }
     }
 
-    getSelected(): BibleTag
+    getSelected(): string
     {
         return this.#selected;
     }
 
-    onLanguageEvent(): void
+    #onMessage(message: Message): void
     {
-        let tags: HTMLCollectionOf<Element> = document.getElementsByClassName("tagBar-item");
-        for (let tag of tags)
+        if (message == Message.LanguageChanged)
         {
-            tag.innerHTML = String(this.#i18nRef.get((tag as any).langKey));
+            let tags: HTMLCollectionOf<Element> = document.getElementsByClassName("tagBar-item");
+            for (let tag of tags)
+            {
+                tag.innerHTML = String(this.#i18nRef.get((tag as any).langKey));
+            }
         }
     }
 
-    #onEvent(tagBar: TagBar, bibleTag: BibleTag, button: HTMLDivElement): void
+    #onEvent(bibleTag: string, button: HTMLDivElement): void
     {
         /* Note: 'this' is here not 'tagBar' if its called from somewhere else. */
 
-        tagBar.#selected = bibleTag;
-        tagBar.#displayQuotes();
+        this.#selected = bibleTag;
 
         // clear 'active' class:
         let buttons : HTMLCollection | undefined = button.parentElement?.children;
@@ -72,5 +88,9 @@ export class TagBar
         }
         // Set clicked button active:
         button.classList.add("active");
+
+        // Send message:
+        // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()]
+        this.#messageBusRef.send(Message.TagChanged);
     }
 }

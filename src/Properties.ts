@@ -1,11 +1,11 @@
 export class Properties
 {
-    #map: Map<string, string>;
+    #map:           Map<string, string>;
     #commentSymbol: string;
 
     constructor()
     {
-        this.#map = new Map<string, string>;
+        this.#map           = new Map<string, string>;
         this.#commentSymbol = "#";
     }
 

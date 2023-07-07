@@ -1,18 +1,21 @@
 {
+    "_comment": "passage: <book>, start-chapter, start-verse [[, end-chapter], end-verse]",
     "tags": [
         "EternalLife", 
         "EternalDeath"
     ],
     "quotes": [
         {
-            "startPos": { "b": "Romans", "c": 6, "v": 23 },
-            "endPos": { "b": "Romans", "c": 6, "v": 23 },
+            "passage": [ "Romans", 6, 23 ],
             "tags": [ "EternalLife", "EternalDeath" ]
         },
         {
-            "startPos": { "b": "Galatians", "c": 4, "v": 4 },
-            "endPos": { "b": "Galatians", "c": 4, "v": 5 },
+            "passage": [ "Galatians", 4, 4, 5 ],
             "tags": [ "EternalLife" ]
+        },
+        {
+            "passage": [ "Matthew", 25, 46 ],
+            "tags": [ "EternalLife", "EternalDeath" ]
         }
     ]
 }

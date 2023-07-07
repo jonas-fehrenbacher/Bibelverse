@@ -18,8 +18,9 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _I18n_properties, _I18n_language, _I18n_dirPath;
+var _I18n_properties, _I18n_language;
 import { Properties } from "./Properties.js";
+import { DataPath } from "./DataPath.js";
 /**
  * Internationalization (I18n) can load en and de as languages.
  * Use get() to get the translation to an corresponding key.
@@ -30,15 +31,13 @@ export class I18n {
     constructor() {
         _I18n_properties.set(this, void 0);
         _I18n_language.set(this, void 0);
-        _I18n_dirPath.set(this, void 0);
         __classPrivateFieldSet(this, _I18n_properties, new Properties, "f");
         __classPrivateFieldSet(this, _I18n_language, "", "f"); // cannot be loaded here, because constructors may not be async
-        __classPrivateFieldSet(this, _I18n_dirPath, "data/", "f");
     }
     load(language) {
         return __awaiter(this, void 0, void 0, function* () {
             __classPrivateFieldSet(this, _I18n_language, language, "f");
-            yield __classPrivateFieldGet(this, _I18n_properties, "f").load(__classPrivateFieldGet(this, _I18n_dirPath, "f") + "i18n_" + language + ".properties");
+            yield __classPrivateFieldGet(this, _I18n_properties, "f").load(DataPath.I18nDir + "i18n_" + language + ".properties");
         });
     }
     get(key) {
@@ -48,5 +47,5 @@ export class I18n {
         return __classPrivateFieldGet(this, _I18n_language, "f");
     }
 }
-_I18n_properties = new WeakMap(), _I18n_language = new WeakMap(), _I18n_dirPath = new WeakMap();
+_I18n_properties = new WeakMap(), _I18n_language = new WeakMap();
 //# sourceMappingURL=I18n.js.map

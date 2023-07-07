@@ -1,39 +1,38 @@
 import { BibleTranslation, Bible } from "./Bible.js";
+import { MessageBus, Message } from "./MessageBus.js";
 
 export class BibleTranslationBar
 {
     #bibleTranslation: BibleTranslation; // TODO: compare translations
-    #bibleMapRef: Map<BibleTranslation, Bible>;
-    #displayQuotes: () => void;
+    #bibleMapRef:      Map<BibleTranslation, Bible>;
+    #messageBusRef:    MessageBus;
+    #gui:              HTMLElement | null; /* graphical user interface */
 
-    constructor(bibleMap: Map<BibleTranslation, Bible>)
+    constructor(bibleMap: Map<BibleTranslation, Bible>, messageBusRef: MessageBus)
     {
         this.#bibleTranslation = BibleTranslation.Schlachter1951;
-        this.#displayQuotes = () => {};
-        this.#bibleMapRef = bibleMap;
+        this.#messageBusRef    = messageBusRef;
+        this.#bibleMapRef      = bibleMap;
+        this.#gui              = document.getElementById("bibleBar");
     }
 
-    init(displayQuotes: () => void): void
+    init(): void
     {
-        this.#displayQuotes = displayQuotes;
-
         for (let [key, bible] of this.#bibleMapRef) {
             // (1) Create tag btn
             let button: HTMLDivElement = document.createElement("div");
             button.classList.add("bibleBar-item");
             button.append(bible.name);
-            button.addEventListener("click", this.#onEvent.bind(null, this, key, button), false);
+            button.addEventListener("click", this.#onEvent.bind(this, key, button), false); /* the first parameter of bind() specifies what 'this' should be inside the function. */
 
             // (2) Add tag btn
-            const bibleBar: HTMLElement | null = document.getElementById("bibleBar");
-            bibleBar?.append(button);
+            this.#gui?.append(button);
 
             //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
         }
 
         // Select bible translation:
-        const bibleBar: HTMLElement | null = document.getElementById("bibleBar");
-        this.#onEvent(this, this.#bibleTranslation, bibleBar?.getElementsByClassName("bibleBar-item")[0] as HTMLDivElement); // TODO: use ids for every translation and select an default translation
+        this.#onEvent(this.#bibleTranslation, this.#gui?.getElementsByClassName("bibleBar-item")[0] as HTMLDivElement); // TODO: use ids for every translation and select an default translation
     }
 
     getSelected(): BibleTranslation
@@ -41,10 +40,9 @@ export class BibleTranslationBar
         return this.#bibleTranslation;
     }
 
-    #onEvent(_this: BibleTranslationBar, bibleTranslation: BibleTranslation, button: HTMLDivElement): void
+    #onEvent(bibleTranslation: BibleTranslation, button: HTMLDivElement): void
     {
-        _this.#bibleTranslation = bibleTranslation;
-        _this.#displayQuotes();
+        this.#bibleTranslation = bibleTranslation;
 
         // clear 'active' class:
         let buttons : HTMLCollection | undefined = button.parentElement?.children;
@@ -56,11 +54,8 @@ export class BibleTranslationBar
         // Set clicked button active:
         button.classList.add("active");
 
-        // Set copyright:
-        let copyrightElement: HTMLElement | null = document.getElementById("copyright");
-        let bible:            Bible | undefined  = _this.#bibleMapRef.get(_this.#bibleTranslation);
-        if (copyrightElement && bible) {
-            copyrightElement.innerHTML = bible.htmlCopyright;
-        }
+        // Send message:
+        // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()] and Footer::changeCopyright()
+        this.#messageBusRef.send(Message.TranslationChanged);
     }
 }

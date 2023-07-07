@@ -18,58 +18,72 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _TagBar_instances, _TagBar_selected, _TagBar_displayQuotes, _TagBar_i18nRef, _TagBar_onEvent;
-import { BibleTag } from "./Bible.js";
+var _TagBar_instances, _TagBar_selected, _TagBar_messageBusRef, _TagBar_i18nRef, _TagBar_gui, _TagBar_onMessage, _TagBar_onEvent;
+import { DataPath } from "./DataPath.js";
+import { Message } from "./MessageBus.js";
 export class TagBar {
-    constructor(i18nRef) {
+    constructor(i18nRef, messageBusRef) {
         _TagBar_instances.add(this);
         _TagBar_selected.set(this, void 0);
-        _TagBar_displayQuotes.set(this, void 0);
+        _TagBar_messageBusRef.set(this, void 0);
         _TagBar_i18nRef.set(this, void 0);
-        __classPrivateFieldSet(this, _TagBar_selected, BibleTag.EternalLife, "f");
-        __classPrivateFieldSet(this, _TagBar_displayQuotes, () => { }, "f");
+        _TagBar_gui.set(this, void 0); /* graphical user interface */
+        __classPrivateFieldSet(this, _TagBar_selected, "", "f");
+        __classPrivateFieldSet(this, _TagBar_messageBusRef, messageBusRef, "f");
         __classPrivateFieldSet(this, _TagBar_i18nRef, i18nRef, "f");
+        __classPrivateFieldSet(this, _TagBar_gui, document.getElementById("tagBar"), "f");
+        __classPrivateFieldGet(this, _TagBar_messageBusRef, "f").add(__classPrivateFieldGet(this, _TagBar_instances, "m", _TagBar_onMessage).bind(this));
     }
-    init(displayQuotes) {
+    init() {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            __classPrivateFieldSet(this, _TagBar_displayQuotes, displayQuotes, "f");
             // Create tags:
-            yield fetch("data/bibleQuotes.json").then(response => response.json()).then(json => {
-                let tag = "";
-                for (tag of json.tags) {
-                    // (1) Create tag btn
-                    let button = document.createElement("div");
-                    //button.id = "tagBar-item-id-" + tag;
-                    button.langKey = tag;
-                    button.classList.add("tagBar-item");
-                    button.append(String(__classPrivateFieldGet(this, _TagBar_i18nRef, "f").get(tag)));
-                    button.addEventListener("click", __classPrivateFieldGet(this, _TagBar_instances, "m", _TagBar_onEvent).bind(null, this, BibleTag[tag], button), false);
-                    // (2) Add tag btn
-                    const tagBar = document.getElementById("tagBar");
-                    tagBar === null || tagBar === void 0 ? void 0 : tagBar.append(button);
-                    //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(BibleTag." + tag + ", this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+            let tags = [];
+            yield fetch(DataPath.BibleQuotes).then(response => response.json()).then(json => {
+                for (let tag of json.tags) {
+                    tags.push(tag);
                 }
             });
+            // Create tag buttons:
+            for (let tag of tags) {
+                // (1) Create tag btn
+                let button = document.createElement("div");
+                //button.id = "tagBar-item-id-" + tag;
+                button.langKey = tag;
+                button.classList.add("tagBar-item");
+                let tagName = __classPrivateFieldGet(this, _TagBar_i18nRef, "f").get(tag);
+                if (tagName) {
+                    button.append(tagName);
+                }
+                else {
+                    button.append(tag + "[i18n-undefined]");
+                }
+                button.addEventListener("click", __classPrivateFieldGet(this, _TagBar_instances, "m", _TagBar_onEvent).bind(this, tag, button), false);
+                // (2) Add tag btn
+                (_a = __classPrivateFieldGet(this, _TagBar_gui, "f")) === null || _a === void 0 ? void 0 : _a.append(button);
+                //document.getElementById("tagBar")?.innerHTML += "<div onClick='onTagEvent(tag, this)' class='tagBar-item'>" + i18n.get(tag) + "</div>";
+            }
             // Select tag:
-            const tagBar = document.getElementById("tagBar");
-            __classPrivateFieldGet(this, _TagBar_instances, "m", _TagBar_onEvent).call(this, this, BibleTag.EternalLife, tagBar === null || tagBar === void 0 ? void 0 : tagBar.getElementsByClassName("tagBar-item")[0]); // TODO: use ids for every tag and select an default tag
+            if (tags.length > 0) {
+                __classPrivateFieldGet(this, _TagBar_instances, "m", _TagBar_onEvent).call(this, tags[0], (_b = __classPrivateFieldGet(this, _TagBar_gui, "f")) === null || _b === void 0 ? void 0 : _b.getElementsByClassName("tagBar-item")[0]); // TODO: use ids for every tag and select an default tag
+            }
         });
     }
     getSelected() {
         return __classPrivateFieldGet(this, _TagBar_selected, "f");
     }
-    onLanguageEvent() {
+}
+_TagBar_selected = new WeakMap(), _TagBar_messageBusRef = new WeakMap(), _TagBar_i18nRef = new WeakMap(), _TagBar_gui = new WeakMap(), _TagBar_instances = new WeakSet(), _TagBar_onMessage = function _TagBar_onMessage(message) {
+    if (message == Message.LanguageChanged) {
         let tags = document.getElementsByClassName("tagBar-item");
         for (let tag of tags) {
             tag.innerHTML = String(__classPrivateFieldGet(this, _TagBar_i18nRef, "f").get(tag.langKey));
         }
     }
-}
-_TagBar_selected = new WeakMap(), _TagBar_displayQuotes = new WeakMap(), _TagBar_i18nRef = new WeakMap(), _TagBar_instances = new WeakSet(), _TagBar_onEvent = function _TagBar_onEvent(tagBar, bibleTag, button) {
+}, _TagBar_onEvent = function _TagBar_onEvent(bibleTag, button) {
     /* Note: 'this' is here not 'tagBar' if its called from somewhere else. */
     var _a;
-    __classPrivateFieldSet(tagBar, _TagBar_selected, bibleTag, "f");
-    __classPrivateFieldGet(tagBar, _TagBar_displayQuotes, "f").call(tagBar);
+    __classPrivateFieldSet(this, _TagBar_selected, bibleTag, "f");
     // clear 'active' class:
     let buttons = (_a = button.parentElement) === null || _a === void 0 ? void 0 : _a.children;
     if (buttons) {
@@ -79,5 +93,8 @@ _TagBar_selected = new WeakMap(), _TagBar_displayQuotes = new WeakMap(), _TagBar
     }
     // Set clicked button active:
     button.classList.add("active");
+    // Send message:
+    // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()]
+    __classPrivateFieldGet(this, _TagBar_messageBusRef, "f").send(Message.TagChanged);
 };
 //# sourceMappingURL=TagBar.js.map
