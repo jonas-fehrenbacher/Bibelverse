@@ -6,6 +6,7 @@ import { BibleTranslationBar } from "./BibleTranslationBar.js";
 import { assert } from "./Tools.js";
 import { DataPath } from "./DataPath.js";
 import { MessageBus, Message } from "./MessageBus.js";
+import { VerseViewSelector, VerseView } from "./VerseViewSelector.js";
 
 export class BibleVerseDisplay
 {
@@ -16,8 +17,9 @@ export class BibleVerseDisplay
     #tagBarRef:              TagBar;
     #bibleTranslationBarRef: BibleTranslationBar;
     #messageBusRef:          MessageBus;
+    #verseViewSelectorRef:   VerseViewSelector;
 
-    constructor(bibleMapRef: Map<BibleTranslation, Bible>, messageBusRef: MessageBus, i18nRef: I18n, tagBarRef: TagBar, bibleTranslationBarRef: BibleTranslationBar)
+    constructor(bibleMapRef: Map<BibleTranslation, Bible>, messageBusRef: MessageBus, i18nRef: I18n, tagBarRef: TagBar, bibleTranslationBarRef: BibleTranslationBar, verseViewSelectorRef: VerseViewSelector)
     {
         this.#bibleMapRef            = bibleMapRef;
         this.#bibleQuotes            = [];
@@ -26,6 +28,7 @@ export class BibleVerseDisplay
         this.#tagBarRef              = tagBarRef;    
         this.#bibleTranslationBarRef = bibleTranslationBarRef;
         this.#messageBusRef          = messageBusRef;
+        this.#verseViewSelectorRef   = verseViewSelectorRef;
 
         this.#messageBusRef.add(this.#onMessage.bind(this));
     }
@@ -108,30 +111,59 @@ export class BibleVerseDisplay
             if (bibleQuote.tags.find(a => a == this.#tagBarRef.getSelected()) != undefined) {
                 //.. tag found
 
+                let isMobile: boolean = false;
+                if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+                    isMobile = true;
+                }
+
                 // (1) Create verse text
                 let bible: Bible | undefined  = this.#bibleMapRef.get(this.#bibleTranslationBarRef.getSelected());
-                let text = document.createElement("div");
-                text.innerHTML = "<span>" + bible?.get(bibleQuote.startPos, bibleQuote.endPos) + "</span>";
+                let text: string = String(bible?.get(bibleQuote.startPos, bibleQuote.endPos));
+                let textElement = document.createElement("div");
+                textElement.innerHTML = "<span>" + text + "</span>";
                 // <span> is required because bible.get() returns text which has tags and they only work like that.
 
                 // (2) Create position box
                 // 'positionContent' is required, so that the background color applies only around the position text.
                 let bibleQuotePositionStr: string = bibleQuote.getPositionStr(this.#i18nRef);
-                let positionContent: HTMLDivElement = document.createElement("div");
+                let positionContent: HTMLAnchorElement = document.createElement("a");
                 positionContent.classList.add("bibleVerse-positionBox");
                 positionContent.append(bibleQuotePositionStr);
+                positionContent.title = "to bibleserver.com";
+                positionContent.href = "https://www.bibleserver.com/" + bible?.nameOnBibleServer + "/" + bibleQuotePositionStr;
+                positionContent.target ="_blank"; /* open in new tab */
+                positionContent.rel = "noopener noreferrer"; /* security reasons, see: https://mathiasbynens.github.io/rel-noopener/; https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target */
                 (positionContent as any).bibleQuote = bibleQuote; /* save this for onLanguageEvent() */
-                let positionBox: HTMLAnchorElement = document.createElement("a");
-                positionBox.title = "to bibleserver.com";
-                positionBox.href = "https://www.bibleserver.com/" + bible?.nameOnBibleServer + "/" + bibleQuotePositionStr;
-                positionBox.target ="_blank"; /* open in new tab */
-                positionBox.rel = "noopener noreferrer"; /* security reasons, see: https://mathiasbynens.github.io/rel-noopener/; https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target */
+                let positionBox: HTMLDivElement = document.createElement("div");
                 positionBox.append(positionContent);
 
                 // (3) Create new verse
                 let newVerse = document.createElement("div");
-                newVerse.classList.add("verseFlexbox-item");
-                newVerse.append(text);
+                // Set view:
+                if (this.#verseViewSelectorRef.getSelected() == VerseView.Grid) {
+                    newVerse.classList.add("verseFlexbox-item", "verseFlexbox-item-gridView");
+                }
+                else newVerse.classList.add("verseFlexbox-item", "verseFlexbox-item-listView");
+                // Set tile size:
+                if (isMobile) {
+                    if (text.length > 100 && text.length < 200) {
+                        newVerse.classList.add("verseFlexbox-item-medium");
+                    }
+                    else if (text.length >= 200) {
+                        newVerse.classList.add("verseFlexbox-item-big");
+                    }
+                } 
+                else {
+                    // ..desktop
+                    if (text.length > 200 && text.length < 400) {
+                        newVerse.classList.add("verseFlexbox-item-medium");
+                    }
+                    else if (text.length >= 400) {
+                        newVerse.classList.add("verseFlexbox-item-big");
+                    }
+                }
+                // Append childs:
+                newVerse.append(textElement);
                 newVerse.append(positionBox)
 
                 // (4) Append verse
@@ -150,7 +182,7 @@ export class BibleVerseDisplay
                 bibleVersePositionBox.innerHTML = (bibleVersePositionBox as any).bibleQuote.getPositionStr(this.#i18nRef);
             }
         }
-        else if (message == Message.TagChanged || message == Message.TranslationChanged) {
+        else if (message == Message.TagChanged || message == Message.TranslationChanged || message == Message.VerseViewChanged) {
             this.#displayQuotes(); // reset bible quotes if tag or translation changed
         }
     }

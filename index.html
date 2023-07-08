@@ -6,15 +6,22 @@
     <title>Bible verses</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' href='style/main.css'>
+    <link rel="icon" type="image/x-icon" href="./images/book.svg">
 </head>
 <body>
     <div id="app">
         <header>
             <a id="title" href="javascript:location.reload(true)"><!-- filled by js --></a>
-            <select id="languageSelector" class="comboBox">
-                <option value="de">Deutsch</option>
-                <option value="en">English</option>
-            </select>
+            <div class="headerOption">
+                <div class="headerOption-verseView">
+                    <img id="listVerseView" alt="List" class="img-btn" src="./images/list-view.svg" />
+                    <img id="gridVerseView" alt="Grid" class="img-btn img-btn-active" src="./images/grid-view.svg" />
+                </div>
+                <select id="languageSelector" class="comboBox">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
         </header>
         
         <nav>

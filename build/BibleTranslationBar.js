@@ -50,11 +50,11 @@ _BibleTranslationBar_bibleTranslation = new WeakMap(), _BibleTranslationBar_bibl
     let buttons = (_a = button.parentElement) === null || _a === void 0 ? void 0 : _a.children;
     if (buttons) {
         for (let it of buttons) {
-            it.classList.remove("active");
+            it.classList.remove("bibleBar-item-active");
         }
     }
     // Set clicked button active:
-    button.classList.add("active");
+    button.classList.add("bibleBar-item-active");
     // Send message:
     // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()] and Footer::changeCopyright()
     __classPrivateFieldGet(this, _BibleTranslationBar_messageBusRef, "f").send(Message.TranslationChanged);

@@ -2,20 +2,35 @@
     "_comment": "passage: <book>, start-chapter, start-verse [[, end-chapter], end-verse]",
     "tags": [
         "EternalLife", 
-        "EternalDeath"
+        "EternalDeath",
+        "NotFromWorks",
+        "DealingsOfChristians"
     ],
     "quotes": [
-        {
-            "passage": [ "Romans", 6, 23 ],
-            "tags": [ "EternalLife", "EternalDeath" ]
-        },
-        {
-            "passage": [ "Galatians", 4, 4, 5 ],
-            "tags": [ "EternalLife" ]
-        },
-        {
-            "passage": [ "Matthew", 25, 46 ],
-            "tags": [ "EternalLife", "EternalDeath" ]
-        }
+        { "passage": [ "Romans", 6, 23 ],         "tags": [ "EternalLife", "EternalDeath" ] },
+        { "passage": [ "Galatians", 4, 4, 5 ],    "tags": [ "EternalLife" ] },
+        { "passage": [ "Matthew", 25, 46 ],       "tags": [ "EternalLife", "EternalDeath" ] },
+        { "passage": [ "Galatians", 3, 8, 14 ],   "tags": [ "EternalLife", "NotFromWorks" ] },
+        { "passage": [ "Corinthias1", 15, 3, 4 ], "tags": [ "EternalLife" ] },
+        { "passage": [ "Corinthias2", 5, 21 ],    "tags": [ "EternalLife" ] },
+        { "passage": [ "John1", 2, 2 ],           "tags": [ "EternalLife" ] },
+        { "passage": [ "Romans", 5, 1 ],          "tags": [ "EternalLife" ] },
+        { "passage": [ "Galatians", 2, 15, 16 ],  "tags": [ "EternalLife", "NotFromWorks" ] },
+        { "passage": [ "Romans", 3, 23, 28 ],     "tags": [ "EternalLife", "NotFromWorks" ] },
+        { "passage": [ "John", 1, 12 ],           "tags": [ "EternalLife" ] },
+        { "passage": [ "John", 3, 18 ],           "tags": [ "EternalLife" ] },
+        { "passage": [ "Corinthias2", 5, 17 ],    "tags": [ "" ] },
+        { "passage": [ "John1", 5, 1 ],           "tags": [ "EternalLife" ] },
+        { "passage": [ "John", 3, 36 ],           "tags": [ "EternalLife", "EternalDeath" ] },
+        { "passage": [ "John1", 2, 1 ],           "tags": [ "" ] },
+        { "passage": [ "Ephesians", 1, 7 ],       "tags": [ "EternalLife" ] },
+        { "passage": [ "Titus", 3, 3, 7 ],        "tags": [ "" ] },
+        { "passage": [ "Peter1", 1, 3, 9 ],       "tags": [ "" ] },
+        { "passage": [ "Romans", 8, 38, 39 ],     "tags": [ "" ] },
+        { "passage": [ "Ephesians", 5, 19 ],      "tags": [ "DealingsOfChristians" ] },
+        { "passage": [ "Ephesians", 5, 20 ],      "tags": [ "DealingsOfChristians" ] },
+        { "passage": [ "Ephesians", 6, 11, 17 ],  "tags": [ "DealingsOfChristians" ] },
+        { "passage": [ "Ephesians", 6, 18 ],      "tags": [ "DealingsOfChristians" ] },
+        { "passage": [ "Ephesians", 4, 17 ],      "tags": [ "DealingsOfChristians" ] }
     ]
 }

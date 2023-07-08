@@ -1,0 +1,33 @@
+:root {
+    --imgBtn-selected-color: rgb(38, 161, 120);
+    --imgBtn-color: rgb(29, 29, 29);
+
+    --imgBtn-selected-hover-color: rgb(48, 201, 150);
+    --imgBtn-hover-color: rgb(94, 94, 94);
+}
+
+.img-btn {
+    border-radius: 0.5rem;
+    padding: 0rem;
+    width: 2.2rem;
+    height: 2.2rem;
+
+    background-color: var(--imgBtn-color);
+
+    cursor: pointer;
+    user-select: none;
+}
+
+/* pressed: */
+.img-btn:active, 
+.img-btn-active {
+    background-color: var(--imgBtn-selected-color);
+}
+
+.img-btn:hover {
+    background-color: var(--imgBtn-hover-color);
+}
+
+.img-btn-active.img-btn:hover {
+    background-color: var(--imgBtn-selected-hover-color);
+}

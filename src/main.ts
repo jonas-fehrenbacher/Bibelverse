@@ -25,7 +25,7 @@ class App
         this.#header              = new Header(this.#i18n, this.#messageBus);
         this.#tagBar              = new TagBar(this.#i18n, this.#messageBus);
         this.#bibleTranslationBar = new BibleTranslationBar(this.#bibleMap, this.#messageBus);
-        this.#bibleVerseDisplay   = new BibleVerseDisplay(this.#bibleMap, this.#messageBus, this.#i18n, this.#tagBar, this.#bibleTranslationBar);
+        this.#bibleVerseDisplay   = new BibleVerseDisplay(this.#bibleMap, this.#messageBus, this.#i18n, this.#tagBar, this.#bibleTranslationBar, this.#header.getVerseViewSelector());
         this.#footer              = new Footer(this.#messageBus, this.#bibleTranslationBar, this.#bibleMap);
     }
 

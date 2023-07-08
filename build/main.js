@@ -43,7 +43,7 @@ class App {
         __classPrivateFieldSet(this, _App_header, new Header(__classPrivateFieldGet(this, _App_i18n, "f"), __classPrivateFieldGet(this, _App_messageBus, "f")), "f");
         __classPrivateFieldSet(this, _App_tagBar, new TagBar(__classPrivateFieldGet(this, _App_i18n, "f"), __classPrivateFieldGet(this, _App_messageBus, "f")), "f");
         __classPrivateFieldSet(this, _App_bibleTranslationBar, new BibleTranslationBar(__classPrivateFieldGet(this, _App_bibleMap, "f"), __classPrivateFieldGet(this, _App_messageBus, "f")), "f");
-        __classPrivateFieldSet(this, _App_bibleVerseDisplay, new BibleVerseDisplay(__classPrivateFieldGet(this, _App_bibleMap, "f"), __classPrivateFieldGet(this, _App_messageBus, "f"), __classPrivateFieldGet(this, _App_i18n, "f"), __classPrivateFieldGet(this, _App_tagBar, "f"), __classPrivateFieldGet(this, _App_bibleTranslationBar, "f")), "f");
+        __classPrivateFieldSet(this, _App_bibleVerseDisplay, new BibleVerseDisplay(__classPrivateFieldGet(this, _App_bibleMap, "f"), __classPrivateFieldGet(this, _App_messageBus, "f"), __classPrivateFieldGet(this, _App_i18n, "f"), __classPrivateFieldGet(this, _App_tagBar, "f"), __classPrivateFieldGet(this, _App_bibleTranslationBar, "f"), __classPrivateFieldGet(this, _App_header, "f").getVerseViewSelector()), "f");
         __classPrivateFieldSet(this, _App_footer, new Footer(__classPrivateFieldGet(this, _App_messageBus, "f"), __classPrivateFieldGet(this, _App_bibleTranslationBar, "f"), __classPrivateFieldGet(this, _App_bibleMap, "f")), "f");
     }
     // Called when webpage is loading.

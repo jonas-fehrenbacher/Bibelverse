@@ -2,7 +2,8 @@ export enum Message
 {
     LanguageChanged,
     TagChanged,
-    TranslationChanged
+    TranslationChanged,
+    VerseViewChanged
 }
 
 export class MessageBus

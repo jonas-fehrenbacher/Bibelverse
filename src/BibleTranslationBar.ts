@@ -48,11 +48,11 @@ export class BibleTranslationBar
         let buttons : HTMLCollection | undefined = button.parentElement?.children;
         if (buttons) {
             for (let it of buttons) {
-                it.classList.remove("active");
+                it.classList.remove("bibleBar-item-active");
             }
         }
         // Set clicked button active:
-        button.classList.add("active");
+        button.classList.add("bibleBar-item-active");
 
         // Send message:
         // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()] and Footer::changeCopyright()

@@ -88,11 +88,11 @@ _TagBar_selected = new WeakMap(), _TagBar_messageBusRef = new WeakMap(), _TagBar
     let buttons = (_a = button.parentElement) === null || _a === void 0 ? void 0 : _a.children;
     if (buttons) {
         for (let it of buttons) {
-            it.classList.remove("active");
+            it.classList.remove("tagBar-item-active");
         }
     }
     // Set clicked button active:
-    button.classList.add("active");
+    button.classList.add("tagBar-item-active");
     // Send message:
     // Used to call BibleVerseDisplay::displayQuotes() [which calls getSelected()]
     __classPrivateFieldGet(this, _TagBar_messageBusRef, "f").send(Message.TagChanged);

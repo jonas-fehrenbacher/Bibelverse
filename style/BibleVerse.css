@@ -8,6 +8,12 @@
 
     background-color: rgb(38, 161, 120);
     color: white;
+
+    text-decoration: none;
+}
+
+.bibleVerse-positionBox:hover {
+    background-color: rgb(46, 194, 145);
 }
 
 /* The verse number inside a quote. */

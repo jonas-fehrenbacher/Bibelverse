@@ -18,13 +18,14 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _BibleVerseDisplay_instances, _BibleVerseDisplay_bibleMapRef, _BibleVerseDisplay_bibleQuotes, _BibleVerseDisplay_verseFlexbox, _BibleVerseDisplay_i18nRef, _BibleVerseDisplay_tagBarRef, _BibleVerseDisplay_bibleTranslationBarRef, _BibleVerseDisplay_messageBusRef, _BibleVerseDisplay_displayQuotes, _BibleVerseDisplay_onMessage;
+var _BibleVerseDisplay_instances, _BibleVerseDisplay_bibleMapRef, _BibleVerseDisplay_bibleQuotes, _BibleVerseDisplay_verseFlexbox, _BibleVerseDisplay_i18nRef, _BibleVerseDisplay_tagBarRef, _BibleVerseDisplay_bibleTranslationBarRef, _BibleVerseDisplay_messageBusRef, _BibleVerseDisplay_verseViewSelectorRef, _BibleVerseDisplay_displayQuotes, _BibleVerseDisplay_onMessage;
 import { BibleQuote, BibleBook, BiblePassagePos } from "./BibleQuote.js";
 import { assert } from "./Tools.js";
 import { DataPath } from "./DataPath.js";
 import { Message } from "./MessageBus.js";
+import { VerseView } from "./VerseViewSelector.js";
 export class BibleVerseDisplay {
-    constructor(bibleMapRef, messageBusRef, i18nRef, tagBarRef, bibleTranslationBarRef) {
+    constructor(bibleMapRef, messageBusRef, i18nRef, tagBarRef, bibleTranslationBarRef, verseViewSelectorRef) {
         _BibleVerseDisplay_instances.add(this);
         _BibleVerseDisplay_bibleMapRef.set(this, void 0);
         _BibleVerseDisplay_bibleQuotes.set(this, void 0);
@@ -33,6 +34,7 @@ export class BibleVerseDisplay {
         _BibleVerseDisplay_tagBarRef.set(this, void 0);
         _BibleVerseDisplay_bibleTranslationBarRef.set(this, void 0);
         _BibleVerseDisplay_messageBusRef.set(this, void 0);
+        _BibleVerseDisplay_verseViewSelectorRef.set(this, void 0);
         __classPrivateFieldSet(this, _BibleVerseDisplay_bibleMapRef, bibleMapRef, "f");
         __classPrivateFieldSet(this, _BibleVerseDisplay_bibleQuotes, [], "f");
         __classPrivateFieldSet(this, _BibleVerseDisplay_verseFlexbox, document.getElementById("verseFlexbox"), "f");
@@ -40,6 +42,7 @@ export class BibleVerseDisplay {
         __classPrivateFieldSet(this, _BibleVerseDisplay_tagBarRef, tagBarRef, "f");
         __classPrivateFieldSet(this, _BibleVerseDisplay_bibleTranslationBarRef, bibleTranslationBarRef, "f");
         __classPrivateFieldSet(this, _BibleVerseDisplay_messageBusRef, messageBusRef, "f");
+        __classPrivateFieldSet(this, _BibleVerseDisplay_verseViewSelectorRef, verseViewSelectorRef, "f");
         __classPrivateFieldGet(this, _BibleVerseDisplay_messageBusRef, "f").add(__classPrivateFieldGet(this, _BibleVerseDisplay_instances, "m", _BibleVerseDisplay_onMessage).bind(this));
     }
     init() {
@@ -93,7 +96,7 @@ export class BibleVerseDisplay {
         });
     }
 }
-_BibleVerseDisplay_bibleMapRef = new WeakMap(), _BibleVerseDisplay_bibleQuotes = new WeakMap(), _BibleVerseDisplay_verseFlexbox = new WeakMap(), _BibleVerseDisplay_i18nRef = new WeakMap(), _BibleVerseDisplay_tagBarRef = new WeakMap(), _BibleVerseDisplay_bibleTranslationBarRef = new WeakMap(), _BibleVerseDisplay_messageBusRef = new WeakMap(), _BibleVerseDisplay_instances = new WeakSet(), _BibleVerseDisplay_displayQuotes = function _BibleVerseDisplay_displayQuotes() {
+_BibleVerseDisplay_bibleMapRef = new WeakMap(), _BibleVerseDisplay_bibleQuotes = new WeakMap(), _BibleVerseDisplay_verseFlexbox = new WeakMap(), _BibleVerseDisplay_i18nRef = new WeakMap(), _BibleVerseDisplay_tagBarRef = new WeakMap(), _BibleVerseDisplay_bibleTranslationBarRef = new WeakMap(), _BibleVerseDisplay_messageBusRef = new WeakMap(), _BibleVerseDisplay_verseViewSelectorRef = new WeakMap(), _BibleVerseDisplay_instances = new WeakSet(), _BibleVerseDisplay_displayQuotes = function _BibleVerseDisplay_displayQuotes() {
     var _a;
     assert(this instanceof BibleVerseDisplay, ""); /* use displayQuotes.bind(this) to achive this. */
     // Empty verse flexbox:
@@ -107,28 +110,57 @@ _BibleVerseDisplay_bibleMapRef = new WeakMap(), _BibleVerseDisplay_bibleQuotes =
     for (let bibleQuote of __classPrivateFieldGet(this, _BibleVerseDisplay_bibleQuotes, "f")) {
         if (bibleQuote.tags.find(a => a == __classPrivateFieldGet(this, _BibleVerseDisplay_tagBarRef, "f").getSelected()) != undefined) {
             //.. tag found
+            let isMobile = false;
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                isMobile = true;
+            }
             // (1) Create verse text
             let bible = __classPrivateFieldGet(this, _BibleVerseDisplay_bibleMapRef, "f").get(__classPrivateFieldGet(this, _BibleVerseDisplay_bibleTranslationBarRef, "f").getSelected());
-            let text = document.createElement("div");
-            text.innerHTML = "<span>" + (bible === null || bible === void 0 ? void 0 : bible.get(bibleQuote.startPos, bibleQuote.endPos)) + "</span>";
+            let text = String(bible === null || bible === void 0 ? void 0 : bible.get(bibleQuote.startPos, bibleQuote.endPos));
+            let textElement = document.createElement("div");
+            textElement.innerHTML = "<span>" + text + "</span>";
             // <span> is required because bible.get() returns text which has tags and they only work like that.
             // (2) Create position box
             // 'positionContent' is required, so that the background color applies only around the position text.
             let bibleQuotePositionStr = bibleQuote.getPositionStr(__classPrivateFieldGet(this, _BibleVerseDisplay_i18nRef, "f"));
-            let positionContent = document.createElement("div");
+            let positionContent = document.createElement("a");
             positionContent.classList.add("bibleVerse-positionBox");
             positionContent.append(bibleQuotePositionStr);
+            positionContent.title = "to bibleserver.com";
+            positionContent.href = "https://www.bibleserver.com/" + (bible === null || bible === void 0 ? void 0 : bible.nameOnBibleServer) + "/" + bibleQuotePositionStr;
+            positionContent.target = "_blank"; /* open in new tab */
+            positionContent.rel = "noopener noreferrer"; /* security reasons, see: https://mathiasbynens.github.io/rel-noopener/; https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target */
             positionContent.bibleQuote = bibleQuote; /* save this for onLanguageEvent() */
-            let positionBox = document.createElement("a");
-            positionBox.title = "to bibleserver.com";
-            positionBox.href = "https://www.bibleserver.com/" + (bible === null || bible === void 0 ? void 0 : bible.nameOnBibleServer) + "/" + bibleQuotePositionStr;
-            positionBox.target = "_blank"; /* open in new tab */
-            positionBox.rel = "noopener noreferrer"; /* security reasons, see: https://mathiasbynens.github.io/rel-noopener/; https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target */
+            let positionBox = document.createElement("div");
             positionBox.append(positionContent);
             // (3) Create new verse
             let newVerse = document.createElement("div");
-            newVerse.classList.add("verseFlexbox-item");
-            newVerse.append(text);
+            // Set view:
+            if (__classPrivateFieldGet(this, _BibleVerseDisplay_verseViewSelectorRef, "f").getSelected() == VerseView.Grid) {
+                newVerse.classList.add("verseFlexbox-item", "verseFlexbox-item-gridView");
+            }
+            else
+                newVerse.classList.add("verseFlexbox-item", "verseFlexbox-item-listView");
+            // Set tile size:
+            if (isMobile) {
+                if (text.length > 100 && text.length < 200) {
+                    newVerse.classList.add("verseFlexbox-item-medium");
+                }
+                else if (text.length >= 200) {
+                    newVerse.classList.add("verseFlexbox-item-big");
+                }
+            }
+            else {
+                // ..desktop
+                if (text.length > 200 && text.length < 400) {
+                    newVerse.classList.add("verseFlexbox-item-medium");
+                }
+                else if (text.length >= 400) {
+                    newVerse.classList.add("verseFlexbox-item-big");
+                }
+            }
+            // Append childs:
+            newVerse.append(textElement);
             newVerse.append(positionBox);
             // (4) Append verse
             (_a = __classPrivateFieldGet(this, _BibleVerseDisplay_verseFlexbox, "f")) === null || _a === void 0 ? void 0 : _a.append(newVerse);
@@ -141,7 +173,7 @@ _BibleVerseDisplay_bibleMapRef = new WeakMap(), _BibleVerseDisplay_bibleQuotes =
             bibleVersePositionBox.innerHTML = bibleVersePositionBox.bibleQuote.getPositionStr(__classPrivateFieldGet(this, _BibleVerseDisplay_i18nRef, "f"));
         }
     }
-    else if (message == Message.TagChanged || message == Message.TranslationChanged) {
+    else if (message == Message.TagChanged || message == Message.TranslationChanged || message == Message.VerseViewChanged) {
         __classPrivateFieldGet(this, _BibleVerseDisplay_instances, "m", _BibleVerseDisplay_displayQuotes).call(this); // reset bible quotes if tag or translation changed
     }
 };

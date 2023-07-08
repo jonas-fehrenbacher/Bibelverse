@@ -25,8 +25,9 @@
 }
 
 .verseFlexbox-item {
-    flex-basis: 20rem; /* max size */
+    /*flex-basis: min-content;*/ /* 20rem; sets the initial main size; min-content is grid style and max-content/fit-content is list style. */
     flex-grow: 1; /* fill remaining horizontal space */
+    min-width: 0; /* 20rem; Tiles can get too small otherwise; If the value is too big, then mobile view is buggy. */
 
     display: flex;
     justify-content: space-between; /* or: center */
@@ -41,6 +42,22 @@
     text-align: center;
     background-color: var(--verseFlexbox-soft-lightBG);
     color: var(--verseFlexbox-soft-lightFG);
+}
+
+.verseFlexbox-item-gridView {
+    flex-basis: min-content; /* 20rem; sets the initial main size; min-content causes grid style. */
+}
+
+.verseFlexbox-item-listView {
+    flex-basis: 999rem; /* 999rem; sets the initial main size; max-content/fit-content causes full item width, but when content is too small, then item does not fill whole row. */
+}
+
+.verseFlexbox-item-medium {
+    min-width: 50%;
+}
+
+.verseFlexbox-item-big {
+    min-width: 100%;
 }
 
 .verseFlexbox-item:nth-child(even) {

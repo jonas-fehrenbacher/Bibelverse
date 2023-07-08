@@ -40,7 +40,7 @@ nav {
 
 /* pressed: */
 .tagBar-item:active, 
-.active {
+.tagBar-item-active {
     /*color: rgb(255, 255, 255, 80%);
     background-color: rgb(38, 161, 120, 60%);*/
     background-color: rgb(var(--tag-selected-color), 70%);
@@ -50,7 +50,7 @@ nav {
     background-color: rgb(var(--tag-default-color), 90%);
 }
 
-.active.tagBar-item:hover {
+.tagBar-item-active.tagBar-item:hover {
     background-color: rgb(var(--tag-selected-color), 90%);
 }
 
@@ -88,7 +88,7 @@ nav {
 
 /* pressed: */
 .bibleBar-item:active, 
-.active {
+.bibleBar-item-active {
     /*color: rgb(255, 255, 255, 80%);
     background-color: rgb(38, 161, 120, 60%);*/
     background-color: rgb(var(--tag-selected-color), 70%);
@@ -98,6 +98,6 @@ nav {
     background-color: rgb(var(--tag-default-color), 90%);
 }
 
-.active.bibleBar-item:hover {
+.bibleBar-item-active.bibleBar-item:hover {
     background-color: rgb(var(--tag-selected-color), 90%);
 }

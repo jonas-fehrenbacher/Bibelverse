@@ -1,5 +1,6 @@
 import { I18n } from "./I18n.js";
 import { MessageBus, Message } from "./MessageBus.js";
+import { VerseViewSelector } from "./VerseViewSelector.js";
 
 export class Header
 {
@@ -7,6 +8,7 @@ export class Header
     #i18nRef :            I18n;
     #languageSelectorBtn: HTMLSelectElement;
     #messageBusRef:       MessageBus;
+    #verseViewSelector : VerseViewSelector;
 
     constructor(i18nRef: I18n, messageBusRef: MessageBus)
     {
@@ -14,6 +16,7 @@ export class Header
         this.#i18nRef             = i18nRef;
         this.#languageSelectorBtn = document.getElementById("languageSelector") as HTMLSelectElement; // TODO: Maybe use class Header(Title, lsBtn)
         this.#messageBusRef       = messageBusRef;
+        this.#verseViewSelector   = new VerseViewSelector(messageBusRef);
 
         this.#messageBusRef.add(this.#onLanguageEvent.bind(this));
     }
@@ -21,7 +24,13 @@ export class Header
     init(): void
     {
         this.#languageSelectorBtn.addEventListener("change", this.#onLanguageSelectorBtnEvent.bind(this), false);
+        this.#verseViewSelector.init();
         this.#onLanguageEvent();
+    }
+
+    getVerseViewSelector(): VerseViewSelector
+    {
+        return this.#verseViewSelector;
     }
 
     async #onLanguageSelectorBtnEvent(): Promise<void>

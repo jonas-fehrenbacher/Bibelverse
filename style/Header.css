@@ -22,3 +22,21 @@ header {
     
     text-decoration: none;
 }
+
+.headerOption {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* vertical */
+    column-gap: 0.5rem;
+}
+
+.headerOption-verseView {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* vertical */
+    column-gap: 0.1rem;
+
+    background-color: rgb(228, 242, 255);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}

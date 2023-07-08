@@ -18,8 +18,9 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Header_instances, _Header_titleElement, _Header_i18nRef, _Header_languageSelectorBtn, _Header_messageBusRef, _Header_onLanguageSelectorBtnEvent, _Header_onLanguageEvent;
+var _Header_instances, _Header_titleElement, _Header_i18nRef, _Header_languageSelectorBtn, _Header_messageBusRef, _Header_verseViewSelector, _Header_onLanguageSelectorBtnEvent, _Header_onLanguageEvent;
 import { Message } from "./MessageBus.js";
+import { VerseViewSelector } from "./VerseViewSelector.js";
 export class Header {
     constructor(i18nRef, messageBusRef) {
         _Header_instances.add(this);
@@ -27,18 +28,24 @@ export class Header {
         _Header_i18nRef.set(this, void 0);
         _Header_languageSelectorBtn.set(this, void 0);
         _Header_messageBusRef.set(this, void 0);
+        _Header_verseViewSelector.set(this, void 0);
         __classPrivateFieldSet(this, _Header_titleElement, document.getElementById("title"), "f");
         __classPrivateFieldSet(this, _Header_i18nRef, i18nRef, "f");
         __classPrivateFieldSet(this, _Header_languageSelectorBtn, document.getElementById("languageSelector"), "f"); // TODO: Maybe use class Header(Title, lsBtn)
         __classPrivateFieldSet(this, _Header_messageBusRef, messageBusRef, "f");
+        __classPrivateFieldSet(this, _Header_verseViewSelector, new VerseViewSelector(messageBusRef), "f");
         __classPrivateFieldGet(this, _Header_messageBusRef, "f").add(__classPrivateFieldGet(this, _Header_instances, "m", _Header_onLanguageEvent).bind(this));
     }
     init() {
         __classPrivateFieldGet(this, _Header_languageSelectorBtn, "f").addEventListener("change", __classPrivateFieldGet(this, _Header_instances, "m", _Header_onLanguageSelectorBtnEvent).bind(this), false);
+        __classPrivateFieldGet(this, _Header_verseViewSelector, "f").init();
         __classPrivateFieldGet(this, _Header_instances, "m", _Header_onLanguageEvent).call(this);
     }
+    getVerseViewSelector() {
+        return __classPrivateFieldGet(this, _Header_verseViewSelector, "f");
+    }
 }
-_Header_titleElement = new WeakMap(), _Header_i18nRef = new WeakMap(), _Header_languageSelectorBtn = new WeakMap(), _Header_messageBusRef = new WeakMap(), _Header_instances = new WeakSet(), _Header_onLanguageSelectorBtnEvent = function _Header_onLanguageSelectorBtnEvent() {
+_Header_titleElement = new WeakMap(), _Header_i18nRef = new WeakMap(), _Header_languageSelectorBtn = new WeakMap(), _Header_messageBusRef = new WeakMap(), _Header_verseViewSelector = new WeakMap(), _Header_instances = new WeakSet(), _Header_onLanguageSelectorBtnEvent = function _Header_onLanguageSelectorBtnEvent() {
     return __awaiter(this, void 0, void 0, function* () {
         // Update i18n:
         if (__classPrivateFieldGet(this, _Header_languageSelectorBtn, "f").value != __classPrivateFieldGet(this, _Header_i18nRef, "f").getLanguage()) {

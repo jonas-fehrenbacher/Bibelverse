@@ -15,6 +15,7 @@ export var Message;
     Message[Message["LanguageChanged"] = 0] = "LanguageChanged";
     Message[Message["TagChanged"] = 1] = "TagChanged";
     Message[Message["TranslationChanged"] = 2] = "TranslationChanged";
+    Message[Message["VerseViewChanged"] = 3] = "VerseViewChanged";
 })(Message || (Message = {}));
 export class MessageBus {
     constructor() {
